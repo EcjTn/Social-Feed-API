@@ -11,11 +11,6 @@ export class UsersController {
 
     constructor(private readonly usersService: UsersService){}
 
-    @Get('/:username')
-    public async getUserById(@Param('username') username: string){
-        return await this.usersService.getPublicProfile(username)
-    }
-
     @Get('/me')
     public async getCurrentInfo(@Req() req: Request){
         const user = req.user as IJwtPayload
@@ -26,6 +21,11 @@ export class UsersController {
     public updateUserBio(@Req() req: Request, @Body('bio') newBio: BioDto){
         const user = req.user as IJwtPayload
         return this.usersService.updateBio(user.sub, newBio.bio)
+    }
+
+     @Get('/:username')
+    public async getUserById(@Param('username') username: string){
+        return await this.usersService.getPublicProfile(username)
     }
 
 }
