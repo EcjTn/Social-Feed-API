@@ -22,7 +22,7 @@ export class UsersService {
         return this.usersRepo.findOne({ where })
     }
 
-    public addNewUser(username: string, password: string, age: number) {
+    public add(username: string, password: string, age: number) {
         const newUser = this.usersRepo.create({username, password, age})
         return this.usersRepo.save(newUser)
     }
@@ -55,7 +55,6 @@ export class UsersService {
         const userRecord = await this.usersRepo.findOne({where: {id: id}, select: ['bio'] })
 
         if(!userRecord) throw new NotFoundException()
-        if(typeof bio !== 'string') throw new BadRequestException()
         
         userRecord.bio = bio
         await this.usersRepo.save(userRecord)
