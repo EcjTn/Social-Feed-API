@@ -9,7 +9,7 @@ export class Posts {
     id: number
 
     @ManyToOne(() => Users, users => users.posts ,{ onDelete: 'CASCADE' })
-    @JoinColumn({name: 'id'})
+    @JoinColumn({name: 'user_id'})
     user: Users
 
     @Column()
