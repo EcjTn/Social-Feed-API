@@ -29,8 +29,8 @@ export class AuthService {
         if (isUserTaken) throw new ConflictException()
 
         //I might make a password service for this soon - to separate.
-        const genSalt = 10
-        const hashPassword = await bcrypt.hash(password, genSalt)
+        const saltRound = 10
+        const hashPassword = await bcrypt.hash(password, saltRound)
 
         try {
             await this.usersService.add(username, hashPassword, age);

@@ -67,8 +67,8 @@ export class UsersService {
         const userRecord = await this.usersRepo.findOne({where: {id}, select: ['password']})
         if(!userRecord) throw new NotFoundException()
 
-        const genSalt = 10
-        userRecord.password = await bcrypt.hash(password, genSalt)
+        const saltRound = 10
+        userRecord.password = await bcrypt.hash(password, saltRound)
 
         await this.usersRepo.save(userRecord)
         
