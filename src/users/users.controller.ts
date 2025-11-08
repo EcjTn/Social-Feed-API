@@ -25,9 +25,9 @@ export class UsersController {
     }
 
     @Patch('/bio')
-    public updateUserBio(@Req() req: Request, @Body('bio') newBio: BioDto){
+    public async updateUserBio(@Req() req: Request, @Body('bio') newBio: BioDto){
         const user = req.user as IJwtPayload
-        return this.usersService.updateBio(user.sub, newBio.bio)
+        return await this.usersService.updateBio(user.sub, newBio.bio)
     }
 
      @Get('/:username')

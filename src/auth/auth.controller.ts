@@ -10,18 +10,18 @@ export class AuthController {
 
   @Post('/register')
   @HttpCode(HttpStatus.CREATED)
-  public registerUser(@Body() data: RegisterUserDto) {
-    return this.authService.registerUser(data.username, data.password, data.age, data.recaptchaToken)
+  public async registerUser(@Body() data: RegisterUserDto) {
+    return await this.authService.registerUser(data.username, data.password, data.age, data.recaptchaToken)
   }
 
   @Post('/login')
-  public loginUser(@Body() data: LoginUserDto, @Res({passthrough: true}) res: Response) {
-    return this.authService.loginUser(data.username, data.password, data.recaptchaToken, res)
+  public async loginUser(@Body() data: LoginUserDto, @Res({passthrough: true}) res: Response) {
+    return await this.authService.loginUser(data.username, data.password, data.recaptchaToken, res)
   }
 
   @Post('/refresh')
-  public refresh(@Req() req: Request ,@Res({passthrough: true}) res: Response){
-    return this.authService.refreshToken(req, res)
+  public async refresh(@Req() req: Request ,@Res({passthrough: true}) res: Response){
+    return await this.authService.refreshToken(req, res)
   }
 
 }
