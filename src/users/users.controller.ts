@@ -19,7 +19,7 @@ export class UsersController {
     }
 
     @Patch('/me/change-password')
-    public async changeUserPassword(@Req() req: Request, data: ChangePasswordDto){
+    public async changeUserPassword(@Req() req: Request, @Body()data: ChangePasswordDto){
         const user = req.user as IJwtPayload
         return await this.usersService.changePassword(user.sub, data.newPassword)
     }
