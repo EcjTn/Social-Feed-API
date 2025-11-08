@@ -4,6 +4,7 @@ import { UsersService } from './users.service';
 import type { Request } from 'express';
 import { IJwtPayload } from 'src/common/interfaces/jwt-payload.interface';
 import { BioDto } from './dto/bio.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard)
@@ -15,6 +16,12 @@ export class UsersController {
     public async getCurrentInfo(@Req() req: Request){
         const user = req.user as IJwtPayload
         return await this.usersService.getOwnProfile(user.sub)
+    }
+
+    @Patch('/me/change-password')
+    public async changeUserPassword(@Req() req: Request, data: ChangePasswordDto){
+        const user = req.user as IJwtPayload
+        return await this.usersService.changePassword(user.sub, data.newPassword)
     }
 
     @Patch('/bio')

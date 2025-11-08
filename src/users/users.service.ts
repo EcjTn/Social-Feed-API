@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, InternalServerErrorException, NotFound
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from './entity/user.entity';
 import { Repository } from 'typeorm';
+import bcrypt from 'bcrypt'
 
 @Injectable()
 export class UsersService {
@@ -60,6 +61,18 @@ export class UsersService {
         await this.usersRepo.save(userRecord)
 
         return { message: 'Bio updated!' }
+    }
+
+    public async changePassword(id: number, password: string) {
+        const userRecord = await this.usersRepo.findOne({where: {id}, select: ['password']})
+        if(!userRecord) throw new NotFoundException()
+
+        const genSalt = 10
+        userRecord.password = await bcrypt.hash(password, genSalt)
+
+        await this.usersRepo.save(userRecord)
+        
+        return {message: 'Successfully changed password.'}
     }
 
 
