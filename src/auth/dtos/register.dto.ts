@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString, Length, Matches, Min } from 'class-validator'
+import { IsNotEmpty, IsNumber, IsString, Length, Matches, Min, MinLength } from 'class-validator'
 
 export class RegisterUserDto {
     @IsString()
@@ -9,6 +9,7 @@ export class RegisterUserDto {
 
     @IsString()
     @IsNotEmpty()
+    @MinLength(8, {message: 'Password is too short(must be above 8 characters).'})
     readonly password: string
 
     @IsNotEmpty()
