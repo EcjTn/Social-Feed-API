@@ -10,6 +10,7 @@ import { RefreshToken } from './entity/refresh-token.entity';
 import { IJwtPayload } from '../common/interfaces/jwt-payload.interface';
 import { COOKIE_KEYS } from './constants/cookie.constant';
 import { RecaptchaService } from 'src/recaptcha/recaptcha.service';
+import { cookieOptions } from 'src/config/cookie-options.config';
 
 @Injectable()
 export class AuthService {
@@ -70,12 +71,7 @@ export class AuthService {
         })
         await this.refreshRepo.save(newRefreshToken)
 
-        res.cookie(COOKIE_KEYS.REFRESH_TOKEN, refreshToken, {
-            //secure: true, in prod for https
-            maxAge: 70 * 70 * 70,
-            sameSite: 'lax',
-            httpOnly: true,
-        })
+        res.cookie(COOKIE_KEYS.REFRESH_TOKEN, refreshToken, cookieOptions)
 
         return { accessToken }
     }
@@ -118,11 +114,7 @@ export class AuthService {
 
         console.log(`Refresh Token rotated for ${user.username}`)
 
-        res.cookie(COOKIE_KEYS.REFRESH_TOKEN, newPlainRefreshToken, {
-            httpOnly: true,
-            //secure: true -- in prod
-            sameSite: 'lax'
-        })
+        res.cookie(COOKIE_KEYS.REFRESH_TOKEN, newPlainRefreshToken, cookieOptions)
 
         return { newAccessToken }
     }
