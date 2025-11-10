@@ -9,7 +9,6 @@ import { RefreshToken } from './entity/refresh-token.entity';
 import { PassportModule } from '@nestjs/passport';
 import { JwtPassportStrategy } from './strategy/jwt.strategy';
 import { JwtAuthGuard } from './guards/jwt.guard';
-import { Users } from 'src/users/entity/user.entity';
 import { RecaptchaModule } from 'src/recaptcha/recaptcha.module';
 
 @Module({
@@ -17,7 +16,7 @@ import { RecaptchaModule } from 'src/recaptcha/recaptcha.module';
     UsersModule,
     PassportModule,
     JwtModule.registerAsync(jwtAsyncOption),
-    TypeOrmModule.forFeature([RefreshToken, Users]),
+    TypeOrmModule.forFeature([RefreshToken]),
     RecaptchaModule,
   ],
   controllers: [AuthController],
