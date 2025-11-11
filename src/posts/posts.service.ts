@@ -55,4 +55,21 @@ export class PostsService {
         return { message: 'Successfully edited post.' };
     }
 
+    public getPosts(cursor?: number) {
+        const limitPosts = 10
+
+        const query = this.postsRepo.createQueryBuilder('post')
+            .innerJoin('post.user', 'user')
+            .innerJoin('post.likes', 'likes')
+            .select([
+                'post.id',
+                'post.title',
+                'post.content',
+                'post.created_at',
+                'user.username'
+            ])
+            .addSelect('COUNT(likes.id)', 'likesCount')
+            .groupBy('post.id')
+    }
+
 }
