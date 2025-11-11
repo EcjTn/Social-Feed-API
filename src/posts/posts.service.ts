@@ -3,15 +3,17 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Posts } from './entity/post.entity';
 import { RecaptchaService } from 'src/recaptcha/recaptcha.service';
-import { PostLikes } from './entity/post-likes.entity';
 import { UsersService } from 'src/users/users.service';
+import Hashids from 'hashids'
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class PostsService {
     constructor(
         @InjectRepository(Posts) private readonly postsRepo: Repository<Posts>,
         private readonly usersService: UsersService,
-        private readonly recaptchaService: RecaptchaService
+        private readonly recaptchaService: RecaptchaService,
+        private readonly configService: ConfigService
     ) { }
 
     public async add(user_id: number, title: string, content: string, recaptchaToken: string) {
@@ -55,35 +57,47 @@ export class PostsService {
         return { message: 'Successfully edited post.' };
     }
 
-    public async getPosts(cursor?: number) {
-        const limitPosts = 10
+    public async getPosts(cursor?: string) {
+        try {
+            const limitPosts = 5
+            const cursorStringLength = 10
 
-        const query = this.postsRepo.createQueryBuilder('post')
-            .innerJoin('post.user', 'user')
-            .leftJoin('post.likes', 'likes')
-            .select([
-                'post.id',
-                'post.title',
-                'post.content',
-                'post.created_at',
-                'user.username'
-            ])
-            .addSelect('COUNT(likes.id)', 'likesCount')
-            .groupBy('post.id')
-            .addGroupBy('user.username')
-            .take(limitPosts)
-            .orderBy('post.id', 'DESC')
+            const hashSalt = await this.configService.getOrThrow('HASH_SALT')
+            const hashIds = new Hashids(hashSalt, cursorStringLength)
 
-            if(cursor) {
-                query.where('post.id < :cursor', {cursor})
+            const query = this.postsRepo.createQueryBuilder('post')
+                .innerJoin('post.user', 'user')
+                .leftJoin('post.likes', 'likes')
+                .select([
+                    'post.id',
+                    'post.title',
+                    'post.content',
+                    'post.created_at',
+                    'user.username'
+                ])
+                .addSelect('COUNT(likes.id)', 'likesCount')
+                .groupBy('post.id')
+                .addGroupBy('user.username')
+                .orderBy('post.id', 'DESC')
+                .limit(limitPosts)
+
+            const decodedCursor = hashIds.decode(cursor ?? '')[0]
+            if (decodedCursor) {
+                query.where('post.id < :decodedCursor', { decodedCursor })
             }
 
-            const posts = await query.getMany()
+            const posts = await query.getRawMany()
 
-            const nextCursor = posts[posts.length - 1].id || null
+            //Last post ID as a cursor
+            const nextCursor: number | null = posts.length ? posts[posts.length - 1].post_id : null
+            const encodedCursor = nextCursor !== null ? hashIds.encode(nextCursor) : null
 
-            return { posts, nextCursor }
-
+            return { posts, cursor: encodedCursor }
+        }
+        catch(e) {
+            console.log("Pagination Error", e)
+            return { posts: [], cursor: null };
+        }
     }
 
 }
