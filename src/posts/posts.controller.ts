@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Param, ParseIntPipe, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import type { Request } from 'express';
@@ -31,5 +31,10 @@ export class PostsController {
     const user = req.user as IJwtPayload
     return await this.postService.edit(user.sub, post_id, data.updatedContent)
   }
+
+  @Get('/posts')
+  public async getPosts() {
+    return this.postService.getPosts()
+  } 
 
 }

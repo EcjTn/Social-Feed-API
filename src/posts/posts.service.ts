@@ -55,12 +55,12 @@ export class PostsService {
         return { message: 'Successfully edited post.' };
     }
 
-    public getPosts(cursor?: number) {
+    public async getPosts(cursor?: number) {
         const limitPosts = 10
 
         const query = this.postsRepo.createQueryBuilder('post')
             .innerJoin('post.user', 'user')
-            .innerJoin('post.likes', 'likes')
+            .leftJoin('post.likes', 'likes')
             .select([
                 'post.id',
                 'post.title',
@@ -70,6 +70,20 @@ export class PostsService {
             ])
             .addSelect('COUNT(likes.id)', 'likesCount')
             .groupBy('post.id')
+            .addGroupBy('user.username')
+            .take(limitPosts)
+            .orderBy('post.id', 'DESC')
+
+            if(cursor) {
+                query.where('post.id < :cursor', {cursor})
+            }
+
+            const posts = await query.getMany()
+
+            const nextCursor = posts[posts.length - 1].id || null
+
+            return { posts, nextCursor }
+
     }
 
 }
