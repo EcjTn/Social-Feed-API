@@ -9,7 +9,7 @@ import { EditPostDto } from './dto/edit-post.dto';
 @Controller('posts')
 //@UseGuards(JwtAuthGuard)
 export class PostsController {
-  constructor(private readonly postService: PostsService) {}
+  constructor(private readonly postService: PostsService) { }
 
   @Post()
   public async create(@Req() req: Request, @Body() post: NewPostDto) {
@@ -17,24 +17,25 @@ export class PostsController {
     return await this.postService.add(user.sub, post.title, post.content, post.recaptchaToken)
   }
 
+
+  @Get()
+  public async getPosts(@Query('cursor') cursor?: string) {
+    return this.postService.getPosts(cursor)
+  }
+
   @Delete('/:id')
-  public async delete(@Req() req: Request, @Param('id', ParseIntPipe)post_id: number){
+  public async delete(@Req() req: Request, @Param('id', ParseIntPipe) post_id: number) {
     const user = req.user as IJwtPayload
     return await this.postService.remove(user.sub, post_id)
   }
 
   @Patch('/:id')
   public async editPost(
-    @Param('id', ParseIntPipe)post_id: number,
-    @Req()req: Request,
-    @Body()data: EditPostDto) {
+    @Param('id', ParseIntPipe) post_id: number,
+    @Req() req: Request,
+    @Body() data: EditPostDto) {
     const user = req.user as IJwtPayload
     return await this.postService.edit(user.sub, post_id, data.updatedContent)
   }
-
-  @Get()
-  public async getPosts(@Query('cursor') cursor?: string) {
-    return this.postService.getPosts(cursor)
-  } 
 
 }
