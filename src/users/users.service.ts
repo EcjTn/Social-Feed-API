@@ -31,10 +31,10 @@ export class UsersService {
     //only used for public purposes.
     public async getPublicProfile(username: string) {
         const userRecord = await this.usersRepo.findOne({
-            select: ['id' ,'username' , 'role', 'is_banned', 'bio', 'created_at'],
-            relations: ['posts'],
-            where: { username }
+            where: {username},
+            select: ['username', 'bio', 'role', 'is_banned', 'created_at']
         })
+
         if(!userRecord) throw new NotFoundException("User not found.")
 
         return userRecord

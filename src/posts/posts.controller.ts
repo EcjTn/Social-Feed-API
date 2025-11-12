@@ -7,7 +7,7 @@ import { NewPostDto } from './dto/new-post.dto';
 import { EditPostDto } from './dto/edit-post.dto';
 
 @Controller('posts')
-@UseGuards(JwtAuthGuard)
+//@UseGuards(JwtAuthGuard)
 export class PostsController {
   constructor(private readonly postService: PostsService) {}
 
