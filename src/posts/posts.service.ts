@@ -100,4 +100,49 @@ export class PostsService {
         }
     }
 
+    public async getPostsByUsername(username: string, cursor?: string){
+        try{
+            const loadUsersPostLimit = 8
+
+            const cursorStringLength = 10
+            const hashSalt = this.configService.getOrThrow('HASH_SALT', cursorStringLength)
+            const hashIds = new Hashids(hashSalt, cursorStringLength)
+
+            const query = this.postsRepo.createQueryBuilder('post')
+                .innerJoin('post.user', 'user')
+                .leftJoin('post.likes', 'likes')
+                .select([
+                    'user.username AS username',
+                    'post.id AS post_id',
+                    'post.title AS title',
+                    'post.content AS content',
+                    'post.created_at AS created_at',
+                ])
+                .addSelect('COUNT(likes.id) AS likes')
+                .where('username = :username', {username})
+                .groupBy('post.id')
+                .orderBy('post_id', 'DESC') //Newest --> Oldest posts
+                .addGroupBy('user.username')
+                .limit(loadUsersPostLimit)
+
+
+            const decodedCursor = hashIds.decode(cursor ?? '')[0]
+            if(decodedCursor){
+                query.andWhere('post.id < :decodedCursor', {decodedCursor})
+            }
+
+            const posts = await query.getRawMany()
+
+            const lastPostId = posts.length ? posts[posts.length - 1].post_id : null
+            const encodeCursor = lastPostId !== null ? hashIds.encode(lastPostId) : null
+
+            return {posts, cursor: encodeCursor}
+
+
+        }catch(e){
+            console.log("GET-USERS-POST ERROR: ", e)
+            return {posts: [], cursor: null}
+        }
+    }
+
 }
