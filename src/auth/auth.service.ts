@@ -10,7 +10,7 @@ import { RefreshToken } from './entity/refresh-token.entity';
 import { IJwtPayload } from '../common/interfaces/jwt-payload.interface';
 import { COOKIE_KEYS } from './constants/cookie.constant';
 import { RecaptchaService } from 'src/recaptcha/recaptcha.service';
-import { cookieOptions } from 'src/config/cookie-options.config';
+import { cookieOptions } from 'src/configs/cookie-options.config';
 
 @Injectable()
 export class AuthService {
