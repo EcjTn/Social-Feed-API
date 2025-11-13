@@ -4,6 +4,8 @@ import { Repository } from 'typeorm';
 import { Posts } from './entity/post.entity';
 import { RecaptchaService } from 'src/recaptcha/recaptcha.service';
 import { UsersService } from 'src/users/users.service';
+import { UserPost, UserPostsResponse } from './interfaces/user-posts.interface';
+import { PublicPost, PublicPostsResponse } from './interfaces/public-posts.interface';
 
 @Injectable()
 export class PostsService {
@@ -54,7 +56,7 @@ export class PostsService {
         return { message: 'Successfully edited post.' };
     }
 
-    public async getPosts(cursor?: number) {
+    public async getPosts(cursor?: number): Promise<PublicPostsResponse>{
         try {
             const limitPosts = 5
 
@@ -78,18 +80,18 @@ export class PostsService {
                 query.where('post.id < :cursor', {cursor})
             }
 
-            const posts = await query.getRawMany()
+            const posts = await query.getRawMany<PublicPost>()
             const nextCursor = posts.length ? posts[posts.length - 1].id : null
 
             return { posts, nextCursor }
         }
         catch(e) {
             console.log("Pagination Error:", e)
-            return { posts: [], cursor: null };
+            return { posts: [], nextCursor: null };
         }
     }
 
-    public async getPostsByUsername(username: string, cursor?: number){
+    public async getPostsByUsername(username: string, cursor?: number): Promise<UserPostsResponse> {
         try{
             const loadUsersPostLimit = 5
 
@@ -115,13 +117,13 @@ export class PostsService {
                 query.andWhere('post.id < :cursor', {cursor})
             }
 
-            const posts = await query.getRawMany()
+            const posts = await query.getRawMany<UserPost>()
             const nextCursor = posts.length ? posts[posts.length - 1].id : null
 
             return {posts, nextCursor}
         }catch(e){
             console.log("GET-USERS-POST ERROR: ", e)
-            return {posts: [], cursor: null}
+            return {posts: [], nextCursor: null}
         }
     }
 
