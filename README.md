@@ -10,4 +10,4 @@
 - Likes
 - Posts
 - Recaptcha Validation(v3)
-- Pagination (Cursor based + Hashed)
+- Cursor Based Pagination
