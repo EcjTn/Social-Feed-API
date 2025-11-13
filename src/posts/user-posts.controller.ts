@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Query, UseGuards } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 
@@ -10,6 +10,7 @@ export class UsersPostController {
 
   @Get('/:username/posts')
   public async getUsersPost(@Param('username') username: string, @Query('cursor') cursor?: string){
-    return await this.postService.getPostsByUsername(username, cursor)
+    const parsedCursor = cursor ? parseInt(cursor, 10) : undefined
+    return await this.postService.getPostsByUsername(username, parsedCursor)
   }
 }

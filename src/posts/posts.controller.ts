@@ -20,7 +20,8 @@ export class PostsController {
 
   @Get()
   public async getPosts(@Query('cursor') cursor?: string) {
-    return this.postService.getPosts(cursor)
+    const parsedCursor = cursor ? parseInt(cursor, 10) : undefined
+    return this.postService.getPosts(parsedCursor)
   }
 
   @Delete('/:id')
