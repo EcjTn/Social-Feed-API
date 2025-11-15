@@ -7,9 +7,13 @@ import { typeOrmAsyncOption } from './configs/database.config';
 import { RecaptchaModule } from './recaptcha/recaptcha.module';
 import { PostsModule } from './posts/posts.module';
 import { LikesModule } from './likes/likes.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
+import { throttlerOptionsSync } from './configs/throttler.config';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot(throttlerOptionsSync),
     ConfigModule.forRoot({isGlobal: true}),
     TypeOrmModule.forRootAsync(typeOrmAsyncOption),
     UsersModule,
@@ -17,6 +21,12 @@ import { LikesModule } from './likes/likes.module';
     RecaptchaModule,
     PostsModule,
     LikesModule
-  ]
+  ],
+
+  providers: [{
+    provide: APP_GUARD,
+    useClass: ThrottlerGuard
+  }]
+
 })
 export class AppModule {}
