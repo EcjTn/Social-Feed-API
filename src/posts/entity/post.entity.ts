@@ -1,6 +1,7 @@
+import { PostLikes } from "src/likes/entities/post-likes.entity";
 import { Users } from "src/users/entity/user.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
-import { PostLikes } from "./post-likes.entity";
+;
 
 @Entity('posts')
 export class Posts {

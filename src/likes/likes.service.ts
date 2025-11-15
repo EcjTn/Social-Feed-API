@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PostLikes } from 'src/posts/entity/post-likes.entity';
 import { Repository } from 'typeorm';
 import { PG_INT_LIMITS } from 'src/common/constants/pg-int-limits';
+import { PostLikes } from './entities/post-likes.entity';
 
 @Injectable()
 export class LikesService {

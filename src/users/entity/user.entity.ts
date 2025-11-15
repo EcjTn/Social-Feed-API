@@ -1,5 +1,5 @@
 import { UserRole } from "src/common/enums/user-role.enum";
-import { PostLikes } from "src/posts/entity/post-likes.entity";
+import { PostLikes } from "src/likes/entities/post-likes.entity";
 import { Posts } from "src/posts/entity/post.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
