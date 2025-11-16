@@ -2,10 +2,6 @@ import { IsNotEmpty, IsNumber, IsPositive, IsString, Length } from "class-valida
 
 export class CommentDto {
 
-    @IsString()
-    @IsNotEmpty()
-    recaptchaToken: string
-
     @IsNotEmpty()
     @IsNumber()
     @IsPositive()
