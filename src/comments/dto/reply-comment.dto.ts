@@ -1,9 +1,10 @@
-import { IsNotEmpty, IsNumber, IsPositive } from "class-validator";
-import { CommentDto } from "./comment.dto";
+import { IsNotEmpty, IsString, Length } from "class-validator";
 
-export class ReplyCommentDto extends CommentDto {
+export class ReplyCommentDto {
+
+    @IsString()
     @IsNotEmpty()
-    @IsPositive()
-    @IsNumber()
-    parent_id: number
+    @Length(1, 200)
+    content: string
+
 }
