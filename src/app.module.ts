@@ -10,6 +10,7 @@ import { LikesModule } from './likes/likes.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
 import { throttlerOptionsSync } from './configs/throttler.config';
 import { APP_GUARD } from '@nestjs/core';
+import { CommentsModule } from './comments/comments.module';
 
 @Module({
   imports: [
@@ -20,7 +21,8 @@ import { APP_GUARD } from '@nestjs/core';
     AuthModule,
     RecaptchaModule,
     PostsModule,
-    LikesModule
+    LikesModule,
+    CommentsModule
   ],
 
   providers: [{
