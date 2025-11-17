@@ -1,6 +1,7 @@
 import { Controller, Get, Param, ParseIntPipe, Query, UseGuards } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { parseCursor } from 'src/utils/cursor-parser.utils';
 
 
 @Controller('users')
@@ -10,7 +11,6 @@ export class UsersPostController {
 
   @Get('/:username/posts')
   public async getUsersPost(@Param('username') username: string, @Query('cursor') cursor?: string){
-    const parsedCursor = cursor ? parseInt(cursor, 10) : undefined
-    return await this.postService.getPostsByUsername(username, parsedCursor)
+    return await this.postService.getPostsByUsername(username, parseCursor(cursor))
   }
 }

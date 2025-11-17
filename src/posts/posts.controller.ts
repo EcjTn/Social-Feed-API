@@ -5,6 +5,7 @@ import type { IJwtPayload } from 'src/common/interfaces/jwt-payload.interface';
 import { NewPostDto } from './dto/new-post.dto';
 import { EditPostDto } from './dto/edit-post.dto';
 import { User } from 'src/common/decorators/user.decorator';
+import { parseCursor } from 'src/utils/cursor-parser.utils';
 
 @Controller('posts')
 @UseGuards(JwtAuthGuard)
@@ -19,8 +20,7 @@ export class PostsController {
 
   @Get()
   public async getPosts(@Query('cursor') cursor?: string) {
-    const parsedCursor = cursor ? parseInt(cursor, 10) : undefined
-    return this.postService.getPosts(parsedCursor)
+    return this.postService.getPosts(parseCursor(cursor))
   }
 
   @Delete('/:id')

@@ -4,6 +4,7 @@ import { User } from 'src/common/decorators/user.decorator';
 import type { IJwtPayload } from 'src/common/interfaces/jwt-payload.interface';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { CommentDto } from './dto/comment.dto';
+import { parseCursor } from 'src/utils/cursor-parser.utils';
 
 @Controller('posts/:postId/comments')
 //@UseGuards(JwtAuthGuard)
@@ -13,15 +14,13 @@ export class CommentsController {
   //Top-level comments
   @Get()
   public async getCommentsByPostId(@Param('postId', ParseIntPipe)post_id: number, @Query('cursor') cursor?: string) {
-    const parsedCursor = cursor ? parseInt(cursor, 10) : undefined
-    return await this.commentsService.getCommentsByPostId(post_id, parsedCursor)
+    return await this.commentsService.getCommentsByPostId(post_id, parseCursor(cursor))
   }
 
   // Replies to a specific comment
   @Get('/:parentId/replies')
   public async getRepliesByParentId(@Param('parentId', ParseIntPipe)parent_id: number, @Query('cursor')cursor?: string){
-    const parsedCursor = cursor ? parseInt(cursor, 10) : undefined
-    return await this.commentsService.getRepliesByParentId(parent_id, parsedCursor)
+    return await this.commentsService.getRepliesByParentId(parent_id, parseCursor(cursor))
   }
 
   @Post()
