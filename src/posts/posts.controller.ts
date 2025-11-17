@@ -40,6 +40,7 @@ export class PostsController {
 
 
 @Controller('users')
+@UseGuards(JwtAuthGuard)
 export class UsersPostController {
   constructor(private readonly postService: PostsService) { }
 
