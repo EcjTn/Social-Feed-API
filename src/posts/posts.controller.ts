@@ -37,3 +37,14 @@ export class PostsController {
   }
 
 }
+
+
+@Controller('users')
+export class UsersPostController {
+  constructor(private readonly postService: PostsService) { }
+
+  @Get('/:username/posts')
+  public async getUsersPost(@Param('username') username: string, @Query('cursor') cursor?: string) {
+    return await this.postService.getPostsByUsername(username, parseCursor(cursor))
+  }
+}
