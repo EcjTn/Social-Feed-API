@@ -16,7 +16,7 @@ export class AuthController {
 
   @Post('/login')
   public async loginUser(@Body() data: LoginUserDto, @Res({passthrough: true}) res: Response) {
-    return await this.authService.loginUser(data.username, data.password, data.recaptchaToken, res)
+    return await this.authService.loginUser(data.username, data.password, res)
   }
 
   @Post('/refresh')

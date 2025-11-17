@@ -10,9 +10,4 @@ export class LoginUserDto {
     @IsString()
     @IsNotEmpty()
     readonly password: string
-
-
-    @IsNotEmpty()
-    @IsString()
-    recaptchaToken: string
 }

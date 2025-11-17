@@ -14,7 +14,7 @@ export class PostsController {
 
   @Post()
   public async create(@User() user: IJwtPayload, @Body() post: NewPostDto) {
-    return await this.postService.add(user.sub, post.title, post.content, post.recaptchaToken)
+    return await this.postService.add(user.sub, post.title, post.content)
   }
 
 

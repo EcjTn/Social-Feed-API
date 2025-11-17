@@ -2,24 +2,19 @@ import { BadRequestException, ForbiddenException, Injectable, NotFoundException,
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Posts } from './entity/post.entity';
-import { RecaptchaService } from 'src/recaptcha/recaptcha.service';
 import { UsersService } from 'src/users/users.service';
 import { UserPost, UserPostsResponse } from './interfaces/user-posts.interface';
 import { PublicPost, PublicPostsResponse } from './interfaces/public-posts.interface';
+import { verifyRecaptcha } from 'src/utils/recaptcha.util';
 
 @Injectable()
 export class PostsService {
     constructor(
         @InjectRepository(Posts) private readonly postsRepo: Repository<Posts>,
         private readonly usersService: UsersService,
-        private readonly recaptchaService: RecaptchaService,
     ) { }
 
-    public async add(user_id: number, title: string, content: string, recaptchaToken: string) {
-
-        const validateRecaptchaToken = await this.recaptchaService.validateToken(recaptchaToken)
-        if (!validateRecaptchaToken) throw new UnauthorizedException()
-
+    public async add(user_id: number, title: string, content: string) {
         const userRecord = await this.usersService.findById(user_id)
         if (!userRecord) throw new ForbiddenException()
 

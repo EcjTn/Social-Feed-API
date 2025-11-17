@@ -12,8 +12,4 @@ export class NewPostDto {
     @Length(1, 500)
     content: string
 
-    @IsString()
-    @IsNotEmpty()
-    recaptchaToken: string
-
 }

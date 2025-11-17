@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from 'src/users/users.service';
 import { Comments } from './entity/comments.entity';
 import { Repository } from 'typeorm';
-import { RecaptchaService } from 'src/recaptcha/recaptcha.service';
 import { Comment, CommentsResponse } from './interfaces/comments-data.interface';
 
 @Injectable()
