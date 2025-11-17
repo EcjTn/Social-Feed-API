@@ -6,26 +6,15 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { CommentDto } from './dto/comment.dto';
 import { parseCursor } from 'src/utils/cursor-parser.utils';
 
-@Controller('posts/:postId/comments')
+@Controller('comments')
 //@UseGuards(JwtAuthGuard)
 export class CommentsController {
-  constructor(private readonly commentsService: CommentsService) {}
-
-  //Top-level comments
-  @Get()
-  public async getCommentsByPostId(@Param('postId', ParseIntPipe)post_id: number, @Query('cursor') cursor?: string) {
-    return await this.commentsService.getCommentsByPostId(post_id, parseCursor(cursor))
-  }
+  constructor(private readonly commentsService: CommentsService) { }
 
   // Replies to a specific comment
   @Get('/:parentId/replies')
-  public async getRepliesByParentId(@Param('parentId', ParseIntPipe)parent_id: number, @Query('cursor')cursor?: string){
+  public async getRepliesByParentId(@Param('parentId', ParseIntPipe) parent_id: number, @Query('cursor') cursor?: string) {
     return await this.commentsService.getRepliesByParentId(parent_id, parseCursor(cursor))
-  }
-
-  @Post()
-  public async addComment(@Param('postId', ParseIntPipe)post_id: number, @User() user: IJwtPayload, data: CommentDto) {
-    return await this.commentsService.add(user.sub, post_id, data.content)
   }
 
   @Post('/:parentId/reply')
@@ -34,7 +23,7 @@ export class CommentsController {
   }
 
   @Delete('/:commentId')
-  public async deleteComment(@User() user: IJwtPayload, @Param('commentId', ParseIntPipe)commentId: number) {
+  public async deleteComment(@User() user: IJwtPayload, @Param('commentId', ParseIntPipe) commentId: number) {
     return this.commentsService.delete(user.sub, commentId)
   }
 
