@@ -4,13 +4,85 @@ import { UsersService } from 'src/users/users.service';
 import { Comments } from './entity/comments.entity';
 import { Repository } from 'typeorm';
 import { RecaptchaService } from 'src/recaptcha/recaptcha.service';
+import { Comment, CommentsResponse } from './interfaces/comments-data.interface';
 
 @Injectable()
 export class CommentsService {
+    private readonly commentsLimitLoad = 10;
     constructor(
         @InjectRepository(Comments) private readonly commentRepo: Repository<Comments>,
         private readonly usersService: UsersService
     ) { }
+
+    //TOP COMMENTS ONLY
+    public async getCommentsByPostId(post_id: number, cursor?: number): Promise<CommentsResponse> {
+        const query = this.commentRepo.createQueryBuilder('comment')
+            .innerJoin('comment.user', 'user')
+            .leftJoin('comment.post', 'post')
+            .leftJoin('comments', 'replies', 'replies.parent_id = comment.id')
+            .select([
+                'user.username AS username',
+                'comment.id AS id',
+                'comment.content AS content',
+                'comment.created_at AS createdAt'
+            ])
+            .addSelect('COUNT(replies.id)', 'repliesCount')
+            .where('post.id = :post_id', { post_id })
+            .andWhere('comment.parent_id IS NULL')
+            .limit(this.commentsLimitLoad)
+            .groupBy('user.username')
+            .addGroupBy('comment.id')
+            .orderBy('comment.id', 'DESC')
+
+        if (cursor) {
+            query.andWhere('comment.id < :cursor', { cursor })
+        }
+
+        try {
+            const comments = await query.getRawMany<Comment>()
+            const nextCursor = comments.length ? comments[comments.length - 1].id : null
+
+            return { comments, nextCursor }
+        }
+        catch (e) {
+            console.log("COMMENTS GET POST ERROR: ", e)
+            //throw new InternalServerErrorException('Failed to load comments.')
+            return { comments: [], nextCursor: null }
+        }
+
+    }
+
+    public async getRepliesByParentId(parent_id: number, cursor?: number): Promise<CommentsResponse> {
+        const query = this.commentRepo.createQueryBuilder('comment')
+            .innerJoin('comment.user', 'user')
+            .leftJoin('comments', 'replies', 'replies.parent_id = comment.id')
+            .select([
+                'user.username AS username',
+                'comment.id AS id',
+                'comment.content AS content',
+                'comment.created_at AS createdAt'
+            ])
+            .addSelect('COUNT(replies.id)', 'repliesCount')
+            .where('comment.parent_id = :parent_id', { parent_id })
+            .limit(this.commentsLimitLoad)
+            .groupBy('user.username')
+            .addGroupBy('comment.id')
+            .orderBy('comment.id', 'ASC');
+
+        if (cursor) {
+            query.andWhere('comment.id < :cursor', { cursor });
+        }
+
+        try {
+            const comments = await query.getRawMany<Comment>();
+            const nextCursor = comments.length ? comments[comments.length -1].id : null
+
+            return { comments, nextCursor };
+        } catch (e) {
+            console.log("REPLIES GET ERROR: ", e);
+            return { comments: [], nextCursor: null };
+        }
+    }
 
     public async add(user_id: number, post_id: number, content: string) {
         const userRecord = await this.usersService.findById(user_id)
