@@ -8,7 +8,7 @@ import { User } from 'src/common/decorators/user.decorator';
 import { parseCursor } from 'src/utils/cursor-parser.utils';
 
 @Controller('posts')
-//@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 export class PostsController {
   constructor(private readonly postService: PostsService) { }
 
@@ -20,7 +20,7 @@ export class PostsController {
 
   @Get()
   public async getPosts(@Query('cursor') cursor?: string) {
-    return this.postService.getPosts(parseCursor(cursor))
+    return this.postService.getPosts(undefined, parseCursor(cursor))
   }
 
   @Delete('/:id')
@@ -40,12 +40,17 @@ export class PostsController {
 
 
 @Controller('users')
-//@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 export class UsersPostController {
   constructor(private readonly postService: PostsService) { }
 
+  @Get('/me/posts')
+  public async getMyPost(@User() user: IJwtPayload, @Query('cursor')cursor?: string) {
+    return await this.postService.getPosts({userId:user.sub}, parseCursor(cursor))
+  }
+
   @Get('/:username/posts')
   public async getUsersPost(@Param('username') username: string, @Query('cursor') cursor?: string) {
-    return await this.postService.getPostsByUsername(username, parseCursor(cursor))
+    return await this.postService.getPosts({username}, parseCursor(cursor))
   }
 }

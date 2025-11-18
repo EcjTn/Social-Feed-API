@@ -3,7 +3,7 @@ export interface UserPost {
     title: string
     content: string
     created_at: Date
-    likes: number
+    likeCount: number
 }
 
 export interface UserPostsResponse {

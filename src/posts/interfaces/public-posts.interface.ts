@@ -5,7 +5,7 @@ export interface PublicPost {
     content: string
     created_at: Date
     commentCount: number
-    likes: number
+    likeCount: number
 }
 
 export interface PublicPostsResponse {
