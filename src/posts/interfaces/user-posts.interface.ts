@@ -1,5 +1,4 @@
 export interface UserPost {
-    username: string
     id: number
     title: string
     content: string

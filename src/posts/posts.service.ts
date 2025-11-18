@@ -57,6 +57,7 @@ export class PostsService {
 
             const query = this.postsRepo.createQueryBuilder('post')
                 .innerJoin('post.user', 'user')
+                .leftJoin('post.comments', 'comments')
                 .leftJoin('post.likes', 'likes')
                 .select([
                     'user.username AS username',
@@ -65,7 +66,8 @@ export class PostsService {
                     'post.content AS content',
                     'post.created_at AS created_At'
                 ])
-                .addSelect('COUNT(likes.id)', 'likes')
+                .addSelect('COUNT(DISTINCT comments.id)', 'commentCount')
+                .addSelect('COUNT(DISTINCT likes.id)', 'likes')
                 .groupBy('post.id')
                 .addGroupBy('user.username')
                 .orderBy('post.id', 'DESC')
@@ -92,15 +94,16 @@ export class PostsService {
 
             const query = this.postsRepo.createQueryBuilder('post')
                 .innerJoin('post.user', 'user')
+                .leftJoin('post.comments', 'comments')
                 .leftJoin('post.likes', 'likes')
                 .select([
-                    'user.username AS username',
                     'post.id AS id',
                     'post.title AS title',
                     'post.content AS content',
                     'post.created_at AS created_at',
                 ])
-                .addSelect('COUNT(likes.id)', 'likes')
+                .addSelect('COUNT(DISTINCT comments.id)', 'commentCount')
+                .addSelect('COUNT(DISTINCT likes.id)', 'likes')
                 .where('username = :username', {username})
                 .groupBy('post.id')
                 .orderBy('id', 'DESC')

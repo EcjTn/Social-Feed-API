@@ -4,6 +4,7 @@ export interface PublicPost {
     title: string
     content: string
     created_at: Date
+    commentCount: number
     likes: number
 }
 
