@@ -4,12 +4,12 @@ import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigModule } from '@nestjs/config'
 import { typeOrmAsyncOption } from './configs/database.config';
-import { RecaptchaModule } from './recaptcha/recaptcha.module';
 import { PostsModule } from './posts/posts.module';
 import { LikesModule } from './likes/likes.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
 import { throttlerOptionsSync } from './configs/throttler.config';
 import { APP_GUARD } from '@nestjs/core';
+import { CommentsModule } from './comments/comments.module';
 
 @Module({
   imports: [
@@ -18,9 +18,9 @@ import { APP_GUARD } from '@nestjs/core';
     TypeOrmModule.forRootAsync(typeOrmAsyncOption),
     UsersModule,
     AuthModule,
-    RecaptchaModule,
     PostsModule,
-    LikesModule
+    LikesModule,
+    CommentsModule
   ],
 
   providers: [{

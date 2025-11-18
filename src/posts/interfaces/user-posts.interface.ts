@@ -1,10 +1,9 @@
 export interface UserPost {
-    username: string
     id: number
     title: string
     content: string
     created_at: Date
-    likes: number
+    likeCount: number
 }
 
 export interface UserPostsResponse {

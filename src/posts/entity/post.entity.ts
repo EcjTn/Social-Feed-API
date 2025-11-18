@@ -1,3 +1,4 @@
+import { Comments } from "src/comments/entity/comments.entity";
 import { PostLikes } from "src/likes/entities/post-likes.entity";
 import { Users } from "src/users/entity/user.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
@@ -24,5 +25,8 @@ export class Posts {
 
     @OneToMany(() => PostLikes, likes => likes.post)
     likes: PostLikes[]
+
+    @OneToMany(() => Comments, comment => comment.post)
+    comments: Comments[]
 
 }

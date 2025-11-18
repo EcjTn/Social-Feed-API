@@ -5,6 +5,7 @@ import type { IJwtPayload } from 'src/common/interfaces/jwt-payload.interface';
 import { NewPostDto } from './dto/new-post.dto';
 import { EditPostDto } from './dto/edit-post.dto';
 import { User } from 'src/common/decorators/user.decorator';
+import { parseCursor } from 'src/utils/cursor-parser.utils';
 
 @Controller('posts')
 @UseGuards(JwtAuthGuard)
@@ -13,14 +14,13 @@ export class PostsController {
 
   @Post()
   public async create(@User() user: IJwtPayload, @Body() post: NewPostDto) {
-    return await this.postService.add(user.sub, post.title, post.content, post.recaptchaToken)
+    return await this.postService.add(user.sub, post.title, post.content)
   }
 
 
   @Get()
   public async getPosts(@Query('cursor') cursor?: string) {
-    const parsedCursor = cursor ? parseInt(cursor, 10) : undefined
-    return this.postService.getPosts(parsedCursor)
+    return this.postService.getPosts(undefined, parseCursor(cursor))
   }
 
   @Delete('/:id')
@@ -36,4 +36,21 @@ export class PostsController {
     return await this.postService.edit(user.sub, post_id, data.updatedContent)
   }
 
+}
+
+
+@Controller('users')
+@UseGuards(JwtAuthGuard)
+export class UsersPostController {
+  constructor(private readonly postService: PostsService) { }
+
+  @Get('/me/posts')
+  public async getMyPost(@User() user: IJwtPayload, @Query('cursor')cursor?: string) {
+    return await this.postService.getPosts({userId:user.sub}, parseCursor(cursor))
+  }
+
+  @Get('/:username/posts')
+  public async getUsersPost(@Param('username') username: string, @Query('cursor') cursor?: string) {
+    return await this.postService.getPosts({username}, parseCursor(cursor))
+  }
 }

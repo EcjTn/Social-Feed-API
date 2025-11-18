@@ -9,21 +9,20 @@ import { Repository } from 'typeorm';
 import { RefreshToken } from './entity/refresh-token.entity';
 import { IJwtPayload } from '../common/interfaces/jwt-payload.interface';
 import { COOKIE_KEYS } from './constants/cookie.constant';
-import { RecaptchaService } from 'src/recaptcha/recaptcha.service';
 import { cookieOptions } from 'src/configs/cookie-options.config';
+import { verifyRecaptcha } from 'src/utils/recaptcha.util';
 
 @Injectable()
 export class AuthService {
     constructor(
         @InjectRepository(RefreshToken) readonly refreshRepo: Repository<RefreshToken>,
-        private readonly recaptchaService: RecaptchaService,
         private readonly usersService: UsersService,
         private readonly jwtService: JwtService
     ) { }
 
     public async registerUser(username: string, password: string, age: number, recaptchaToken: string) {
 
-        const validateRecaptchaToken = await this.recaptchaService.validateToken(recaptchaToken)
+        const validateRecaptchaToken = await verifyRecaptcha(recaptchaToken)
         if (!validateRecaptchaToken) throw new UnauthorizedException('Invalid Recaptcha Token!')
 
         const isUserTaken = await this.usersService.findByUser(username)
@@ -43,10 +42,7 @@ export class AuthService {
 
     }
 
-    public async loginUser(username: string, password: string, recaptchaToken: string, res: Response) {
-
-        const validateRecaptchaToken = await this.recaptchaService.validateToken(recaptchaToken)
-        if (!validateRecaptchaToken) throw new UnauthorizedException('Invalid Recaptcha Token!')
+    public async loginUser(username: string, password: string, res: Response) {
 
         const existingUser = await this.usersService.findByUser(username, { checkBanned: true })
         if (!existingUser) throw new UnauthorizedException("Invalid credentials!")
