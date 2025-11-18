@@ -31,7 +31,7 @@ export class CommentsService {
             .limit(this.commentsLimitLoad)
             .groupBy('user.username')
             .addGroupBy('comment.id')
-            .orderBy('comment.id', 'DESC')
+            .orderBy('comment.id', 'DESC') // NEWEST TO OLDEST
 
         if (cursor) {
             query.andWhere('comment.id < :cursor', { cursor })
@@ -66,10 +66,10 @@ export class CommentsService {
             .limit(this.commentsLimitLoad)
             .groupBy('user.username')
             .addGroupBy('comment.id')
-            .orderBy('comment.id', 'ASC');
+            .orderBy('comment.id', 'ASC') // OLDEST TO NEWEST;
 
         if (cursor) {
-            query.andWhere('comment.id < :cursor', { cursor });
+            query.andWhere('comment.id > :cursor', { cursor });
         }
 
         try {
