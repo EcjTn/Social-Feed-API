@@ -56,6 +56,7 @@ export class PostsService {
     const loadLimit = 5
     const query = this.postsRepo.createQueryBuilder('post')
         .leftJoin('post.comments', 'comments')
+        .innerJoin('post.user', 'user')
         .leftJoin('post.likes', 'likes')
         .select([
             'post.id AS id',
@@ -66,19 +67,16 @@ export class PostsService {
         .addSelect('COUNT(DISTINCT comments.id)', 'commentCount')
         .addSelect('COUNT(DISTINCT likes.id)', 'likeCount')
         .groupBy('post.id')
+        .addGroupBy('user.username')
         .orderBy('post.id', 'DESC')
         .limit(loadLimit)
 
     if (filter?.username) {
-        query.innerJoin('post.user', 'user')
         query.andWhere('user.username = :username', { username: filter.username })
     } else if (filter?.userId) {
-        query.innerJoin('post.user', 'user')
         query.andWhere('user.id = :userId', { userId: filter.userId })
     } else {
-        query.innerJoin('post.user', 'user')
         query.addSelect('user.username AS username')
-        query.addGroupBy('user.username')
     }
 
     if (cursor) {
