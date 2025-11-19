@@ -1,3 +1,4 @@
+import { CommentLikes } from "src/likes/entities/comment-likes.entity";
 import { Posts } from "src/posts/entity/post.entity";
 import { Users } from "src/users/entity/user.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
@@ -19,6 +20,9 @@ export class Comments {
     @ManyToOne(() => Comments, {onDelete: 'CASCADE', nullable: true})
     @JoinColumn({name: 'parent_id'})
     parent: Comments
+
+    @OneToMany(() => CommentLikes, commentLike => commentLike.comment)
+    likes: CommentLikes[]
 
     @Column()
     content: string

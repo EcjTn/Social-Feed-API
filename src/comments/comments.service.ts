@@ -19,13 +19,15 @@ export class CommentsService {
             .innerJoin('comment.user', 'user')
             .leftJoin('comment.post', 'post')
             .leftJoin('comments', 'replies', 'replies.parent_id = comment.id')
+            .leftJoin('comment.likes', 'likes')
             .select([
                 'user.username AS username',
                 'comment.id AS id',
                 'comment.content AS content',
                 'comment.created_at AS createdAt'
             ])
-            .addSelect('COUNT(replies.id)', 'repliesCount')
+            .addSelect('COUNT(DISTINCT replies.id)', 'repliesCount')
+            .addSelect('COUNT(DISTINCT likes.id)', 'likeCount')
             .where('post.id = :post_id', { post_id })
             .andWhere('comment.parent_id IS NULL')
             .limit(this.commentsLimitLoad)
@@ -54,6 +56,7 @@ export class CommentsService {
     public async getRepliesByParentId(parent_id: number, cursor?: number): Promise<CommentsResponse> {
         const query = this.commentRepo.createQueryBuilder('comment')
             .innerJoin('comment.user', 'user')
+            .leftJoin('comment.likes', 'likes')
             .leftJoin('comments', 'replies', 'replies.parent_id = comment.id')
             .select([
                 'user.username AS username',
@@ -62,6 +65,7 @@ export class CommentsService {
                 'comment.created_at AS createdAt'
             ])
             .addSelect('COUNT(replies.id)', 'repliesCount')
+            .addSelect('COUNT(DISTINCT likes.id)', 'likeCount')
             .where('comment.parent_id = :parent_id', { parent_id })
             .limit(this.commentsLimitLoad)
             .groupBy('user.username')

@@ -4,6 +4,7 @@ export interface Comment {
     content: string;
     createdAt: string;
     repliesCount: number;
+    likeCount: number;
 }
 
 
