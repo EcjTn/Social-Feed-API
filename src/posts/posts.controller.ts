@@ -39,18 +39,4 @@ export class PostsController {
 }
 
 
-@Controller('users')
-@UseGuards(JwtAuthGuard)
-export class UsersPostController {
-  constructor(private readonly postService: PostsService) { }
 
-  @Get('/me/posts')
-  public async getMyPost(@User() user: IJwtPayload, @Query('cursor')cursor?: string) {
-    return await this.postService.getPosts({userId:user.sub}, parseCursor(cursor))
-  }
-
-  @Get('/:username/posts')
-  public async getUsersPost(@Param('username') username: string, @Query('cursor') cursor?: string) {
-    return await this.postService.getPosts({username}, parseCursor(cursor))
-  }
-}
