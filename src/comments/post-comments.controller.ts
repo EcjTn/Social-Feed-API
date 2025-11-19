@@ -6,14 +6,14 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { CommentDto } from './dto/comment.dto';
 import { parseCursor } from 'src/utils/cursor-parser.utils';
 
-@Controller('posts/:postId/comments')
+@Controller('posts/:id/comments')
 @UseGuards(JwtAuthGuard)
 export class PostCommentsController {
   constructor(private readonly commentsService: CommentsService) { }
 
   @Get()
   public async getCommentsByPostId(
-    @Param('postId', ParseIntPipe) postId: number,
+    @Param('id', ParseIntPipe) postId: number,
     @Query('cursor') cursor?: string
   ) {
     return this.commentsService.getCommentsByPostId(postId, parseCursor(cursor));
@@ -21,7 +21,7 @@ export class PostCommentsController {
 
   @Post()
   public async addComment(
-    @Param('postId', ParseIntPipe) postId: number,
+    @Param('id', ParseIntPipe) postId: number,
     @User() user: IJwtPayload,
     @Body() data: CommentDto
   ) {
