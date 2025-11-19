@@ -7,7 +7,7 @@ import { CommentDto } from './dto/comment.dto';
 import { parseCursor } from 'src/utils/cursor-parser.utils';
 
 @Controller('comments')
-//@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) { }
 
