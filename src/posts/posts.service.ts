@@ -3,10 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Posts } from './entity/post.entity';
 import { UsersService } from 'src/users/users.service';
-import { UserPost, UserPostsResponse } from './interfaces/user-posts.interface';
-import { PublicPost, PublicPostsResponse } from './interfaces/public-posts.interface';
 import { verifyRecaptcha } from 'src/utils/recaptcha.util';
 import { PostFilter } from './interfaces/post-filter.interface';
+import { PostData, PostDataResponse } from './interfaces/post-data.interface';
 
 @Injectable()
 export class PostsService {
@@ -52,13 +51,14 @@ export class PostsService {
         return { message: 'Successfully edited post.' };
     }
 
-    public async getPosts(filter?: PostFilter, cursor?: number) {
+    public async getPosts(filter?: PostFilter, cursor?: number): Promise<PostDataResponse> {
     const loadLimit = 5
     const query = this.postsRepo.createQueryBuilder('post')
         .leftJoin('post.comments', 'comments')
         .innerJoin('post.user', 'user')
         .leftJoin('post.likes', 'likes')
         .select([
+            'user.username AS username',
             'post.id AS id',
             'post.title AS title',
             'post.content AS content',
@@ -71,19 +71,15 @@ export class PostsService {
         .orderBy('post.id', 'DESC')
         .limit(loadLimit)
 
-    if (filter?.username) {
-        query.andWhere('user.username = :username', { username: filter.username })
-    } else if (filter?.userId) {
-        query.andWhere('user.id = :userId', { userId: filter.userId })
-    } else {
-        query.addSelect('user.username AS username')
-    }
+    if (filter?.username) { query.andWhere('user.username = :username', { username: filter.username }) }
+
+    if (filter?.userId) { query.andWhere('user.id = :userId', { userId: filter.userId }) }
 
     if (cursor) {
         query.andWhere('post.id < :cursor', { cursor })
     }
 
-    const posts = await query.getRawMany<PublicPost | UserPost>()
+    const posts = await query.getRawMany<PostData>()
     const nextCursor = posts.length ? posts[posts.length - 1].id : null
 
     return { posts, nextCursor }

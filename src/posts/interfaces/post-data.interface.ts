@@ -1,4 +1,4 @@
-export interface PublicPost {
+export interface PostData {
     username: string
     id: number
     title: string
@@ -8,7 +8,7 @@ export interface PublicPost {
     likeCount: number
 }
 
-export interface PublicPostsResponse {
-    posts: PublicPost[]
+export interface PostDataResponse {
+    posts: PostData[]
     nextCursor: number | null
 }
