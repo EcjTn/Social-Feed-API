@@ -1,8 +1,10 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Delete, HttpCode, HttpStatus, Post, Req, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from './dtos/login.dto';
 import type { Request, Response } from 'express';
 import { RegisterUserDto } from './dtos/register.dto';
+import { User } from 'src/common/decorators/user.decorator';
+import type { IJwtPayload } from 'src/common/interfaces/jwt-payload.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -17,6 +19,11 @@ export class AuthController {
   @Post('/login')
   public async loginUser(@Body() data: LoginUserDto, @Res({passthrough: true}) res: Response) {
     return await this.authService.loginUser(data.username, data.password, res)
+  }
+
+  @Delete('/logout')
+  public async logoutUser(@User() user: IJwtPayload) {
+    return await this.authService.logoutUser(user.sub)
   }
 
   @Post('/refresh')
