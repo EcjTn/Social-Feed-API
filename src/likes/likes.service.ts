@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { PG_INT_LIMITS } from 'src/common/constants/pg-int-limits';
 import { PostLikes } from './entities/post-likes.entity';
 import { CommentLikes } from './entities/comment-likes.entity';
 
@@ -13,8 +12,6 @@ export class LikesService {
     ) { }
 
     public async addPostLike(user_id: number, post_id: number) {
-        if (post_id > PG_INT_LIMITS.MINIMUM_LENGTH || post_id < PG_INT_LIMITS.MINIMUM_LENGTH) throw new BadRequestException()
-
         try {
             const likeExists = await this.postLikesRepo.findOne({
                 where: { user: { id: user_id }, post: { id: post_id } }
@@ -36,8 +33,6 @@ export class LikesService {
     }
 
     public async removePostLike(user_id: number, post_id: number) {
-        if (post_id > PG_INT_LIMITS.MINIMUM_LENGTH || post_id < PG_INT_LIMITS.MINIMUM_LENGTH) throw new BadRequestException()
-
         try {
             const deleteLike = await this.postLikesRepo.delete({
                 user: { id: user_id },

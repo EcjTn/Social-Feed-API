@@ -89,7 +89,7 @@ export class CommentsService {
 
     public async add(user_id: number, post_id: number, content: string) {
         const userRecord = await this.usersService.findById(user_id)
-        if (userRecord) throw new BadRequestException('User not found')
+        if (!userRecord) {throw new BadRequestException('User not found')}
 
         try {
             const newComment = this.commentRepo.create({
@@ -117,20 +117,20 @@ export class CommentsService {
         const userRecord = await this.usersService.findById(user_id);
         if (!userRecord) throw new BadRequestException('User not found');
 
-        const parentComment = await this.commentRepo.findOne({ where: { id: parent_comment_id } });
+        const parentComment = await this.commentRepo.findOne({ where: {id: parent_comment_id}, relations: ['post'] });
         if (!parentComment) throw new BadRequestException('Parent comment not found');
 
         try {
             const newReply = this.commentRepo.create({
                 user: { id: user_id },
-                post: { id: parentComment.post.id },
+                post: {id: parentComment.post.id},
                 parent: { id: parent_comment_id },
                 content
             });
 
-            await this.commentRepo.save(newReply);
+            const addReply = await this.commentRepo.save(newReply);
 
-            return { message: 'Successfully replied!' };
+            return { message: 'Successfully replied!', comment_id: addReply.id };
         } catch (e) {
             // FK violation
             console.log("REPLY ADD ERROR: ", e);
