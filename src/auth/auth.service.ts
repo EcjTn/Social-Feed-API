@@ -72,6 +72,13 @@ export class AuthService {
         return { accessToken }
     }
 
+    public async logoutUser(user_id: number) {
+        await this.refreshRepo.delete({
+            user: {id: user_id}
+        })
+
+        return {message: 'Successfully logged out.'}
+    }
 
     public async refreshToken(req: Request, res: Response) {
         const refreshToken = req.cookies[COOKIE_KEYS.REFRESH_TOKEN]

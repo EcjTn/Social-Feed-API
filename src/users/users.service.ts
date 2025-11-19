@@ -53,7 +53,8 @@ export class UsersService {
     }
 
     public async updateBio(id: number, bio: string) {
-        const userRecord = await this.usersRepo.findOne({where: {id: id}, select: ['bio'] })
+        console.log(id)
+        const userRecord = await this.usersRepo.findOne({where: {id} })
 
         if(!userRecord) throw new NotFoundException()
         

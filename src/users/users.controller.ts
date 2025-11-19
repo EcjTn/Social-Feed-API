@@ -24,7 +24,7 @@ export class UsersController {
     }
 
     @Patch('/bio')
-    public async updateUserBio(@User() user: IJwtPayload, @Body('bio') newBio: BioDto){
+    public async updateUserBio(@User() user: IJwtPayload, @Body() newBio: BioDto){
         return await this.usersService.updateBio(user.sub, newBio.bio)
     }
 
