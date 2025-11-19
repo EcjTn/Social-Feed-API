@@ -45,9 +45,8 @@ export class UsersService {
         const userRecord = await this.usersRepo.findOne({
             where: {id},
             select: ['id', 'username', 'bio', 'role', 'created_at'],
-            relations: ['posts']
         })
-        if(!userRecord) throw new NotFoundException()
+        if(!userRecord) throw new NotFoundException('User not found.')
 
         return userRecord
     }
