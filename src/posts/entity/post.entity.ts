@@ -1,7 +1,7 @@
 import { Comments } from "src/comments/entity/comments.entity";
 import { PostLikes } from "src/likes/entities/post-likes.entity";
 import { Users } from "src/users/entity/user.entity";
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
 ;
 
 @Entity('posts')
@@ -12,6 +12,7 @@ export class Posts {
 
     @ManyToOne(() => Users, users => users.posts ,{ onDelete: 'CASCADE' })
     @JoinColumn({name: 'user_id'})
+    @Index()
     user: Users
 
     @Column()

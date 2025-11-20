@@ -1,7 +1,7 @@
 import { CommentLikes } from "src/likes/entities/comment-likes.entity";
 import { Posts } from "src/posts/entity/post.entity";
 import { Users } from "src/users/entity/user.entity";
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('comments')
 export class Comments {
@@ -11,14 +11,17 @@ export class Comments {
 
     @ManyToOne(() => Users, {onDelete: 'CASCADE'})
     @JoinColumn({name: 'user_id'})
+    @Index()
     user: Users
 
     @ManyToOne(() => Posts, post => post.comments,{onDelete: 'CASCADE'})
     @JoinColumn({name: 'post_id'})
+    @Index()
     post: Posts
 
     @ManyToOne(() => Comments, {onDelete: 'CASCADE', nullable: true})
     @JoinColumn({name: 'parent_id'})
+    @Index()
     parent: Comments
 
     @OneToMany(() => CommentLikes, commentLike => commentLike.comment)
