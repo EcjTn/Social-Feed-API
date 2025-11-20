@@ -5,6 +5,8 @@ import { ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser'
 import { GlobalFilter } from './common/global.filter';
 import cors from 'cors'
+import { SwaggerModule } from '@nestjs/swagger';
+import { swaggerConfig } from './configs/swagger.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -17,6 +19,9 @@ async function bootstrap() {
     forbidNonWhitelisted: true,
   }))
   app.useGlobalFilters(new GlobalFilter())
+
+  const documentFactory = () => SwaggerModule.createDocument(app, swaggerConfig)
+  SwaggerModule.setup('swagger', app, documentFactory);
 
   app.setGlobalPrefix('/api/v1')
 
