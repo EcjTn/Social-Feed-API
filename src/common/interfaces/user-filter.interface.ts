@@ -1,4 +1,4 @@
-export interface PostFilter {
+export interface IUserFilter {
     userId?: number
     username?: string
 }

@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Follow } from './entity/follows.entity';
 import { Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
+import { IUserFilter } from 'src/common/interfaces/user-filter.interface';
+import { IFollowData, IFollowDataResponse } from './interfaces/follow-data.interface';
 
 @Injectable()
 export class FollowService {
@@ -15,7 +17,7 @@ export class FollowService {
         const targetUser = await this.usersService.findByUser(followingUsername)
         if (!targetUser) throw new NotFoundException('Target user not found.')
 
-            
+
         if (follower_id === targetUser?.id) throw new BadRequestException('You cannot follow yourself.')
 
         const existingFollow = await this.followRepo.findOne({ where: { follower: { id: follower_id }, following: { id: targetUser?.id } } })
@@ -40,16 +42,38 @@ export class FollowService {
         const targetUser = await this.usersService.findByUser(followingUsername)
 
         const result = await this.followRepo.delete({
-            follower: {id: follower_id},
-            following: {id: targetUser?.id}
+            follower: { id: follower_id },
+            following: { id: targetUser?.id }
         })
-        if(!result.affected) throw new BadRequestException('You did not follow this user.')
+        if (!result.affected) throw new BadRequestException('You did not follow this user.')
 
-        return {message: 'Successfully unfollowed user.'}
+        return { message: 'Successfully unfollowed user.' }
     }
 
-    public getFollowersByUsername(username: string, cursor?: number) {
+    public async getFollowers(filter?: IUserFilter, cursor?: number): Promise<IFollowDataResponse> {
+        const limitLoad = 20
+        const query = this.followRepo.createQueryBuilder('follow')
+            .innerJoin('follow.following', 'user')
+            .innerJoin('follow.follower', 'follower')
+            .select(['follower.username AS username', 'follow.id AS id'])
+            .orderBy('follow.id', 'DESC')
+            .limit(limitLoad)
 
+        try {
+            if (filter?.userId) { query.andWhere('user.id = :userId', { userId: filter.userId }) }
+            if (filter?.username) { query.andWhere('user.username = :username', { username: filter.username }) }
+
+            if (cursor) { query.andWhere('follow.id < :cursor', { cursor }) }
+            const followers = await query.getRawMany<IFollowData>()
+
+            const nextCursor = followers ? followers[followers.length - 1].id : null
+
+            return { followers, nextCursor }
+        }
+        catch(e) {
+            console.log("LOAD-FOLLOWERS ERROR:", e)
+            return { followers: [], nextCursor: null}
+        }
     }
 
 

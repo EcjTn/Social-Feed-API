@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { Posts } from './entity/post.entity';
 import { UsersService } from 'src/users/users.service';
 import { verifyRecaptcha } from 'src/utils/recaptcha.util';
-import { PostFilter } from './interfaces/post-filter.interface';
+import { IUserFilter } from '../common/interfaces/user-filter.interface';
 import { PostData, PostDataResponse } from './interfaces/post-data.interface';
 
 @Injectable()
@@ -51,7 +51,7 @@ export class PostsService {
         return { message: 'Successfully edited post.' };
     }
 
-    public async getPosts(filter?: PostFilter, cursor?: number): Promise<PostDataResponse> {
+    public async getPosts(filter?: IUserFilter, cursor?: number): Promise<PostDataResponse> {
     const loadLimit = 5
     const query = this.postsRepo.createQueryBuilder('post')
         .leftJoin('post.comments', 'comments')
