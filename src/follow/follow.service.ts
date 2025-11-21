@@ -40,14 +40,20 @@ export class FollowService {
 
     public async unfollow(follower_id: number, followingUsername: string) {
         const targetUser = await this.usersService.findByUser(followingUsername)
+        try {
+            const result = await this.followRepo.delete({
+                follower: { id: follower_id },
+                following: { id: targetUser?.id }
+            })
+            if (!result.affected) throw new BadRequestException('You did not follow this user.')
 
-        const result = await this.followRepo.delete({
-            follower: { id: follower_id },
-            following: { id: targetUser?.id }
-        })
-        if (!result.affected) throw new BadRequestException('You did not follow this user.')
+            return { message: 'Successfully unfollowed user.' }
+        }
+        catch(e) {
+            console.log("REMOVE FOLLOW ERROR:", e)
+            throw new InternalServerErrorException('Failed to unfollow user.')
+        }
 
-        return { message: 'Successfully unfollowed user.' }
     }
 
     public async getFollowers(filter?: IUserFilter, cursor?: number): Promise<IFollowDataResponse> {
@@ -70,9 +76,9 @@ export class FollowService {
 
             return { followers, nextCursor }
         }
-        catch(e) {
+        catch (e) {
             console.log("LOAD-FOLLOWERS ERROR:", e)
-            return { followers: [], nextCursor: null}
+            return { followers: [], nextCursor: null }
         }
     }
 
