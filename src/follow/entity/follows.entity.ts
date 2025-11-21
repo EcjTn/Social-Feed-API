@@ -1,5 +1,5 @@
 import { Users } from "src/users/entity/user.entity";
-import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
 
 @Entity('follows')
 @Unique(['follower', 'following'])
@@ -14,6 +14,7 @@ export class Follow {
 
     @ManyToOne(() => Users, {onDelete: 'CASCADE'})
     @JoinColumn({name: 'following_id'})
+    @Index()
     following: Users
 
 }

@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Follow } from './entity/follows.entity';
 import { Repository } from 'typeorm';
@@ -9,43 +9,44 @@ export class FollowService {
     constructor(
         @InjectRepository(Follow) private readonly followRepo: Repository<Follow>,
         private readonly usersService: UsersService
-    ){}
+    ) { }
 
-    public async follow(follower_id: number, following_id: number) {
-        if(follower_id === following_id) { throw new BadRequestException('Cannot follow yourself.') }
+    public async follow(follower_id: number, followingUsername: string) {
+        const targetUser = await this.usersService.findByUser(followingUsername)
+        if (!targetUser) throw new NotFoundException('Target user not found.')
 
-        const followerRecord = await this.usersService.findById(follower_id)
-        if(!followerRecord) throw new BadRequestException('User not found.')
+            
+        if (follower_id === targetUser?.id) throw new BadRequestException('You cannot follow yourself.')
 
-        const existingFollow = await this.followRepo.findOne({
-            where: { follower: {id: follower_id}, following: {id: following_id}}
-        })
-        if(existingFollow) throw new ConflictException('You are already following this user.')
+        const existingFollow = await this.followRepo.findOne({ where: { follower: { id: follower_id }, following: { id: targetUser?.id } } })
+        if (existingFollow) throw new BadRequestException('Already following this user.')
 
         try {
             const newFollow = this.followRepo.create({
-                follower: followerRecord,
-                following: {id: following_id}
+                follower: { id: follower_id },
+                following: { id: targetUser?.id }
             })
             await this.followRepo.save(newFollow)
 
-            return {message: 'Successfully followed user.'}
+            return { message: 'Successfully followed user.' }
         }
-        catch(e) {
-            console.log("ADD-FOLLOW ERROR:", e)
-            throw new InternalServerErrorException('Could not follow user.')
+        catch (e) {
+            console.log("FOLLOW-ADD ERROR:", e)
+            throw new InternalServerErrorException('Failed to follow user.')
         }
-
     }
 
-    public async unfollow(follower_id: number, following_id: number) {
+    public async unfollow(follower_id: number, followingUsername: string) {
+        const targetUser = await this.usersService.findByUser(followingUsername)
+
         const result = await this.followRepo.delete({
             follower: {id: follower_id},
-            following: {id: following_id}
+            following: {id: targetUser?.id}
         })
-        if(!result.affected) throw new BadRequestException('You did not like this post.')
+        if(!result.affected) throw new BadRequestException('You did not follow this user.')
 
-        return {message: 'Successfully unliked post.'}
+        return {message: 'Successfully unfollowed user.'}
     }
+
 
 }

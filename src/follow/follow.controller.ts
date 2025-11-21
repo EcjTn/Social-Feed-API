@@ -1,16 +1,22 @@
-import { Controller, Delete, Param, Post } from '@nestjs/common';
+import { Controller, Delete, Param, Post, UseGuards } from '@nestjs/common';
 import { FollowService } from './follow.service';
 import { User } from 'src/common/decorators/user.decorator';
 import type { IJwtPayload } from 'src/common/interfaces/jwt-payload.interface';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 
 @Controller('/users/:username/')
+@UseGuards(JwtAuthGuard)
 export class FollowController {
   constructor(private readonly followService: FollowService) {}
 
   @Post('/follow')
-  public followUser(@User()user: IJwtPayload, @Param('username')username: string) {}
+  public async followUser(@User()user: IJwtPayload, @Param('username')username: string) {
+    return await this.followService.follow(user.sub, username)
+  }
 
   @Delete('/unfollow')
-  public unfollowUser(@User()user: IJwtPayload, @Param('username')username: string) {}
+  public async unfollowUser(@User()user: IJwtPayload, @Param('username')username: string) {
+    return await this.followService.unfollow(user.sub, username)
+  }
 
 }

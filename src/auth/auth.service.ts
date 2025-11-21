@@ -88,7 +88,7 @@ export class AuthService {
         //Check Current RT existence
         const hashPlainToken = crypto.createHash('sha256').update(refreshToken).digest('hex')
         const tokenRecord = await this.refreshRepo.findOne({ where: { hash_token: hashPlainToken }, relations: ['user'] })
-        if (!tokenRecord) throw new UnauthorizedException()
+        if (!tokenRecord) throw new UnauthorizedException('Invalid refresh token')
 
 
         const currentDate = new Date()
