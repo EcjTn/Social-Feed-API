@@ -48,5 +48,9 @@ export class FollowService {
         return {message: 'Successfully unfollowed user.'}
     }
 
+    public getFollowersByUsername(username: string, cursor?: number) {
+
+    }
+
 
 }
