@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from './entity/user.entity';
 import { Repository } from 'typeorm';
 import bcrypt from 'bcrypt'
-import { IProfileData, IPublicProfileData } from './interfaces/profile-data.interface';
+import { IProfileData, IPublicProfileData } from './interfaces/profile-data.interfaces';
 
 @Injectable()
 export class UsersService {
