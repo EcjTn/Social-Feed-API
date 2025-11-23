@@ -15,9 +15,19 @@ export class FollowController {
     return this.followService.getFollowers({userId: user.sub}, parseCursor(cursor))
   }
 
+  @Get('/me/followings')
+  public async getMyFollowings(@User()user: IJwtPayload, @Query('cursor')cursor?: string) {
+    return await this.followService.getFollowings({userId: user.sub}, parseCursor(cursor))
+  }
+
   @Get('/:username/followers')
   public async getUsersFollowers(@Param('username')username: string, @Query('cursor')cursor?: string) {
     return await this.followService.getFollowers({username}, parseCursor(cursor))
+  }
+
+  @Get('/:username/followings')
+  public async getUsersFollowing(@Param('username')username: string, @Query('cursor')cursor?: string) {
+    return await this.followService.getFollowings({username}, parseCursor(cursor))
   }
 
   @Post('/:username/follow')

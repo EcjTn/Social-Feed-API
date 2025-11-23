@@ -5,9 +5,11 @@ import { Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { IUserFilter } from 'src/common/interfaces/user-filter.interface';
 import { IFollowData, IFollowDataResponse } from './interfaces/follow-data.interface';
+import { IFollowingData, IFollowingDataResponse } from './interfaces/following-data.interface';
 
 @Injectable()
 export class FollowService {
+    private readonly limitLoad = 20;
     constructor(
         @InjectRepository(Follow) private readonly followRepo: Repository<Follow>,
         private readonly usersService: UsersService
@@ -57,13 +59,12 @@ export class FollowService {
     }
 
     public async getFollowers(filter?: IUserFilter, cursor?: number): Promise<IFollowDataResponse> {
-        const limitLoad = 20
         const query = this.followRepo.createQueryBuilder('follow')
             .innerJoin('follow.following', 'user')
             .innerJoin('follow.follower', 'follower')
             .select(['follower.username AS username', 'follow.id AS id'])
             .orderBy('follow.id', 'DESC')
-            .limit(limitLoad)
+            .limit(this.limitLoad)
 
         try {
             if (filter?.userId) { query.andWhere('user.id = :userId', { userId: filter.userId }) }
@@ -72,7 +73,7 @@ export class FollowService {
             if (cursor) { query.andWhere('follow.id < :cursor', { cursor }) }
             const followers = await query.getRawMany<IFollowData>()
 
-            const nextCursor = followers ? followers[followers.length - 1].id : null
+            const nextCursor = followers.length ? followers[followers.length - 1].id : null
 
             return { followers, nextCursor }
         }
@@ -82,5 +83,24 @@ export class FollowService {
         }
     }
 
+    public async getFollowings(filter?: IUserFilter, cursor?: number): Promise<IFollowingDataResponse> {
+        const query = this.followRepo.createQueryBuilder('follow')
+            .innerJoin('follow.following', 'following')
+            .innerJoin('follow.follower', 'follower')
+            .select(['following.username AS username', 'follow.id AS id'])
+            .orderBy('follow.id', 'DESC')
+            .limit(this.limitLoad)
+        
+        if(filter?.username) { query.andWhere('follower.username = :username', {username: filter.username}) }
+        if(filter?.userId) { query.andWhere('follower.id = :id', {id: filter.userId}) }
+
+        if(cursor) { query.andWhere('follow.id < :cursor', {cursor}) }
+
+        const followings = await query.getRawMany<IFollowingData>()
+        const nextCursor = followings.length ? followings[followings.length - 1].id : null
+        
+        return {followings, nextCursor}
+
+    }
 
 }
