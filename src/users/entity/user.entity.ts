@@ -1,4 +1,5 @@
 import { UserRole } from "src/common/enums/user-role.enum";
+import { Follow } from "src/follow/entity/follows.entity";
 import { PostLikes } from "src/likes/entities/post-likes.entity";
 import { Posts } from "src/posts/entity/post.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
@@ -37,7 +38,7 @@ export class Users {
     @OneToMany(() => Posts, posts => posts.user)
     posts: Posts[]
 
-    @OneToMany(() => PostLikes, likes => likes.user)
-    liked: PostLikes[]
+    @OneToMany(() => Follow, follow => follow.follower)
+    followers: Follow[]
 
 }

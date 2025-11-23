@@ -13,7 +13,7 @@ export class PostLikes {
     @JoinColumn({name: 'post_id'})
     post: Posts
 
-    @ManyToOne(() => Users, user => user.liked, { onDelete: 'CASCADE'})
+    @ManyToOne(() => Users, { onDelete: 'CASCADE'})
     @JoinColumn({name: 'user_id'})
     user: Users
 }

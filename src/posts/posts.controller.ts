@@ -8,7 +8,7 @@ import { User } from 'src/common/decorators/user.decorator';
 import { parseCursor } from 'src/utils/cursor-parser.utils';
 
 @Controller('posts')
-//@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 export class PostsController {
   constructor(private readonly postService: PostsService) { }
 
