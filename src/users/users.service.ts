@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from './entity/user.entity';
 import { Repository } from 'typeorm';
 import bcrypt from 'bcrypt'
+import { IProfileData, IPublicProfileData } from './interfaces/profile-data.interface';
 
 @Injectable()
 export class UsersService {
@@ -29,7 +30,7 @@ export class UsersService {
     }
 
     //only used for public purposes.
-    public async getPublicProfile(username: string) {
+    public async getPublicProfile(username: string): Promise<IPublicProfileData[]> {
         const query = this.usersRepo.createQueryBuilder('user')
             .leftJoin('posts', 'post', 'post.user_id = user.id')
             .leftJoin('follows', 'followers', 'followers.following_id = user.id')
@@ -46,12 +47,12 @@ export class UsersService {
             .where('user.username = :username', { username })
             .groupBy('user.id')
 
-        const userInfo = await query.getRawMany()
+        const userInfo = await query.getRawMany<IPublicProfileData>()
         return userInfo
     }
 
     //for /users/me
-    public async getOwnProfile(id: number) {
+    public async getOwnProfile(id: number): Promise<IProfileData[]> {
         const query = this.usersRepo.createQueryBuilder('user')
             .leftJoin('posts', 'post', 'post.user_id = user.id')
             .leftJoin('follows', 'followers', 'followers.following_id = user.id')
@@ -68,7 +69,7 @@ export class UsersService {
             .where('user.id = :id', { id })
             .groupBy('user.id')
 
-        const userInfo = await query.getRawMany()
+        const userInfo = await query.getRawMany<IProfileData>()
         return userInfo
     }
 
