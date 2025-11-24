@@ -4,7 +4,7 @@ import { User } from 'src/common/decorators/user.decorator';
 import type { IJwtPayload } from 'src/common/interfaces/jwt-payload.interface';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { CommentDto } from './dto/comment.dto';
-import { parseCursor } from 'src/utils/cursor-parser.utils';
+import { parseCursor } from 'src/utils/cursor-parser.util';
 
 @Controller('posts/:id/comments')
 @UseGuards(JwtAuthGuard)

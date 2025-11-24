@@ -5,7 +5,7 @@ import type { IJwtPayload } from 'src/common/interfaces/jwt-payload.interface';
 import { NewPostDto } from './dto/new-post.dto';
 import { EditPostDto } from './dto/edit-post.dto';
 import { User } from 'src/common/decorators/user.decorator';
-import { parseCursor } from 'src/utils/cursor-parser.utils';
+import { parseCursor } from 'src/utils/cursor-parser.util';
 
 @Controller('posts')
 @UseGuards(JwtAuthGuard)
