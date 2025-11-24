@@ -5,7 +5,7 @@
 ## Current Features
 
 - Auths
-- Access Token(JWT) & Refresh Tokem
+- Access Token(JWT) & Refresh Token
 - Users
 - Likes
 - Posts
