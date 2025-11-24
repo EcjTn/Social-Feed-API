@@ -10,7 +10,8 @@ import { RefreshToken } from './entity/refresh-token.entity';
 import { IJwtPayload } from '../common/interfaces/jwt-payload.interface';
 import { COOKIE_KEYS } from './constants/cookie.constant';
 import { cookieOptions } from 'src/configs/cookie-options.config';
-import { verifyRecaptcha } from 'src/utils/recaptcha.util';
+import { verifyRecaptcha } from 'src/auth/utils/recaptcha.util';
+import { randomProfilePic } from './utils/profile-pic.util';
 
 @Injectable()
 export class AuthService {
@@ -22,18 +23,20 @@ export class AuthService {
 
     public async registerUser(username: string, password: string, age: number, recaptchaToken: string) {
 
+        const profilePicture = randomProfilePic()
+
         const validateRecaptchaToken = await verifyRecaptcha(recaptchaToken)
         if (!validateRecaptchaToken) throw new UnauthorizedException('Invalid Recaptcha Token!')
 
         const isUserTaken = await this.usersService.findByUser(username)
         if (isUserTaken) throw new ConflictException()
 
-        //I might make a password service for this soon - to separate.
+        //I might make a password service/util for this soon - to separate.
         const saltRound = 10
         const hashPassword = await bcrypt.hash(password, saltRound)
 
         try {
-            await this.usersService.add(username, hashPassword, age);
+            await this.usersService.add(username, hashPassword, age, profilePicture);
             return { message: 'Successfully Registered' };
         } catch (err) {
             console.error(err); // ?.message

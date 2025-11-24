@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Posts } from './entity/post.entity';
 import { UsersService } from 'src/users/users.service';
-import { verifyRecaptcha } from 'src/utils/recaptcha.util';
+import { verifyRecaptcha } from 'src/auth/utils/recaptcha.util';
 import { IUserFilter } from '../common/interfaces/user-filter.interface';
 import { PostData, PostDataResponse } from './interfaces/post-data.interface';
 
