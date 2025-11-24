@@ -11,7 +11,7 @@ import { IJwtPayload } from '../common/interfaces/jwt-payload.interface';
 import { COOKIE_KEYS } from './constants/cookie.constant';
 import { cookieOptions } from 'src/configs/cookie-options.config';
 import { verifyRecaptcha } from 'src/auth/utils/recaptcha.util';
-import { randomProfilePic } from './utils/profile-pic.util';
+import { generateIdenticon } from './utils/profile-pic.util';
 
 @Injectable()
 export class AuthService {
@@ -23,7 +23,7 @@ export class AuthService {
 
     public async registerUser(username: string, password: string, age: number, recaptchaToken: string) {
 
-        const profilePicture = randomProfilePic()
+        const avatar = generateIdenticon(username)
 
         const validateRecaptchaToken = await verifyRecaptcha(recaptchaToken)
         if (!validateRecaptchaToken) throw new UnauthorizedException('Invalid Recaptcha Token!')
@@ -36,7 +36,7 @@ export class AuthService {
         const hashPassword = await bcrypt.hash(password, saltRound)
 
         try {
-            await this.usersService.add(username, hashPassword, age, profilePicture);
+            await this.usersService.add(username, hashPassword, age, avatar);
             return { message: 'Successfully Registered' };
         } catch (err) {
             console.error(err); // ?.message

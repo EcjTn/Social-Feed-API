@@ -13,8 +13,8 @@ export class Users {
     @Column( {unique: true, type: 'varchar'} )
     username: string
 
-    @Column({default: 'https://api.dicebear.com/7.x/identicon/png?seed=github1&backgroundColor=004500'})
-    profilePicture: string
+    @Column({nullable: true})
+    avatar: string
 
     @Column( {
         type: 'enum',

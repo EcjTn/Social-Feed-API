@@ -1,7 +1,9 @@
 import { UserRole } from "src/common/enums/user-role.enum"
 
 export interface IProfileData {
+    avatar: string | null
     username: string
+    followedByMe?: boolean
     role: UserRole.User | UserRole.Moderator | UserRole.Admin
     isBanned: boolean
     bio: string | null
@@ -9,6 +11,3 @@ export interface IProfileData {
     followerCount: number
     followingCount: number
 }
-
-//TODO: add followedByMe boolean after service implementation
-export interface IPublicProfileData extends IProfileData {}

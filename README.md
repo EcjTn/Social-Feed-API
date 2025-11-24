@@ -12,7 +12,7 @@
 - Comments
 - Followers
 - Likes(Posts/Comments)
-- Default Avatars/Pfps
+- Identicon Avatars/Pfps
 - Rate Limiting(Throttler/app-level)
 - Helmet Protection
 - GZip Compression

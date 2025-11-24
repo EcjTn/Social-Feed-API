@@ -3,7 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from './entity/user.entity';
 import { Repository } from 'typeorm';
 import bcrypt from 'bcrypt'
-import { IProfileData, IPublicProfileData } from './interfaces/profile-data.interfaces';
+import { IProfileData } from './interfaces/profile-data.interfaces';
+import { Profile } from 'passport';
 
 @Injectable()
 export class UsersService {
@@ -24,18 +25,19 @@ export class UsersService {
         return this.usersRepo.findOne({ where })
     }
 
-    public add(username: string, password: string, age: number, profilePicture: string) {
-        const newUser = this.usersRepo.create({ username, password, age, profilePicture })
+    public add(username: string, password: string, age: number, avatar: string) {
+        const newUser = this.usersRepo.create({ username, password, age, avatar })
         return this.usersRepo.save(newUser)
     }
 
     //only used for public purposes.
-    public async getPublicProfile(username: string): Promise<IPublicProfileData[]> {
+    public async getPublicProfile(username: string): Promise<IProfileData[]> {
         const query = this.usersRepo.createQueryBuilder('user')
             .leftJoin('posts', 'post', 'post.user_id = user.id')
             .leftJoin('follows', 'followers', 'followers.following_id = user.id')
             .leftJoin('follows', 'followings', 'followings.follower_id = user.id')
             .select([
+                'user.profilePicture as avatar',
                 'user.username AS username',
                 'user.role AS role',
                 'user.is_banned AS isBanned',
@@ -47,7 +49,7 @@ export class UsersService {
             .where('user.username = :username', { username })
             .groupBy('user.id')
 
-        const userInfo = await query.getRawMany<IPublicProfileData>()
+        const userInfo = await query.getRawMany<IProfileData>()
         return userInfo
     }
 
