@@ -5,7 +5,7 @@ import { Posts } from './entity/post.entity';
 import { UsersService } from 'src/users/users.service';
 import { verifyRecaptcha } from 'src/auth/utils/recaptcha.util';
 import { IUserFilter } from '../common/interfaces/user-filter.interface';
-import { PostData, PostDataResponse } from './interfaces/post-data.interface';
+import { IPostData, IPostDataResponse } from './interfaces/post-data.interface';
 
 @Injectable()
 export class PostsService {
@@ -51,7 +51,7 @@ export class PostsService {
         return { message: 'Successfully edited post.' };
     }
 
-    public async getPosts(filter?: IUserFilter, cursor?: number): Promise<PostDataResponse> {
+    public async getPosts(filter?: IUserFilter, cursor?: number): Promise<IPostDataResponse> {
     const loadLimit = 5
     const query = this.postsRepo.createQueryBuilder('post')
         .leftJoin('post.comments', 'comments')
@@ -80,7 +80,7 @@ export class PostsService {
         query.andWhere('post.id < :cursor', { cursor })
     }
 
-    const posts = await query.getRawMany<PostData>()
+    const posts = await query.getRawMany<IPostData>()
     const nextCursor = posts.length ? posts[posts.length - 1].id : null
 
     return { posts, nextCursor }

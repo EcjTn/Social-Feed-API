@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from './entity/user.entity';
 import { Repository } from 'typeorm';
 import bcrypt from 'bcrypt'
-import { IProfileData } from './interfaces/profile-data.interfaces';
+import { IProfileData, IProfileDataPublic } from './interfaces/profile-data.interfaces';
 import { Profile } from 'passport';
 
 @Injectable()
@@ -31,7 +31,7 @@ export class UsersService {
     }
 
     //only used for public purposes.
-    public async getPublicProfile(username: string): Promise<IProfileData[]> {
+    public async getPublicProfile(username: string): Promise<IProfileDataPublic[]> {
         const query = this.usersRepo.createQueryBuilder('user')
             .leftJoin('posts', 'post', 'post.user_id = user.id')
             .leftJoin('follows', 'followers', 'followers.following_id = user.id')
@@ -49,7 +49,7 @@ export class UsersService {
             .where('user.username = :username', { username })
             .groupBy('user.id')
 
-        const userInfo = await query.getRawMany<IProfileData>()
+        const userInfo = await query.getRawMany<IProfileDataPublic>()
         return userInfo
     }
 

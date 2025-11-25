@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from 'src/users/users.service';
 import { Comments } from './entity/comments.entity';
 import { Repository } from 'typeorm';
-import { Comment, CommentsResponse } from './interfaces/comments-data.interface';
+import { IComment, ICommentsResponse } from './interfaces/comments-data.interface';
 
 @Injectable()
 export class CommentsService {
@@ -14,7 +14,7 @@ export class CommentsService {
     ) { }
 
     //TOP COMMENTS ONLY
-    public async getCommentsByPostId(post_id: number, cursor?: number): Promise<CommentsResponse> {
+    public async getCommentsByPostId(post_id: number, cursor?: number): Promise<ICommentsResponse> {
         const query = this.commentRepo.createQueryBuilder('comment')
             .innerJoin('comment.user', 'user')
             .leftJoin('comment.post', 'post')
@@ -41,7 +41,7 @@ export class CommentsService {
         }
 
         try {
-            const comments = await query.getRawMany<Comment>()
+            const comments = await query.getRawMany<IComment>()
             const nextCursor = comments.length ? comments[comments.length - 1].id : null
 
             return { comments, nextCursor }
@@ -54,7 +54,7 @@ export class CommentsService {
 
     }
 
-    public async getRepliesByParentId(parent_id: number, cursor?: number): Promise<CommentsResponse> {
+    public async getRepliesByParentId(parent_id: number, cursor?: number): Promise<ICommentsResponse> {
         const query = this.commentRepo.createQueryBuilder('comment')
             .innerJoin('comment.user', 'user')
             .leftJoin('comment.likes', 'likes')
@@ -79,7 +79,7 @@ export class CommentsService {
         }
 
         try {
-            const comments = await query.getRawMany<Comment>();
+            const comments = await query.getRawMany<IComment>();
             const nextCursor = comments.length ? comments[comments.length -1].id : null
 
             return { comments, nextCursor };

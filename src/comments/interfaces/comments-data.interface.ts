@@ -1,4 +1,4 @@
-export interface Comment {
+export interface IComment {
     username: string;
     avatar: string | null;
     id: number;
@@ -9,7 +9,7 @@ export interface Comment {
 }
 
 
-export interface CommentsResponse {
-    comments: Comment[],
+export interface ICommentsResponse {
+    comments: IComment[],
     nextCursor: number | null
 }

@@ -1,4 +1,4 @@
-export interface PostData {
+export interface IPostData {
     username: string
     avatar: string | null
     id: number
@@ -9,7 +9,7 @@ export interface PostData {
     likeCount: number
 }
 
-export interface PostDataResponse {
-    posts: PostData[]
+export interface IPostDataResponse {
+    posts: IPostData[]
     nextCursor: number | null
 }

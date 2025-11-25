@@ -4,8 +4,7 @@ import { Follow } from './entity/follows.entity';
 import { Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { IUserFilter } from 'src/common/interfaces/user-filter.interface';
-import { IFollowData, IFollowDataResponse } from './interfaces/follow-data.interface';
-import { IFollowingData, IFollowingDataResponse } from './interfaces/following-data.interface';
+import { IFollowersData, IFollowersDataResponse, IFollowingData, IFollowingDataResponse } from './interfaces/follow-data.interface';
 
 @Injectable()
 export class FollowService {
@@ -58,7 +57,7 @@ export class FollowService {
 
     }
 
-    public async getFollowers(filter?: IUserFilter, cursor?: number): Promise<IFollowDataResponse> {
+    public async getFollowers(filter?: IUserFilter, cursor?: number): Promise<IFollowersDataResponse> {
         const query = this.followRepo.createQueryBuilder('follow')
             .innerJoin('follow.following', 'user')
             .innerJoin('follow.follower', 'follower')
@@ -71,7 +70,7 @@ export class FollowService {
             if (filter?.username) { query.andWhere('user.username = :username', { username: filter.username }) }
 
             if (cursor) { query.andWhere('follow.id < :cursor', { cursor }) }
-            const followers = await query.getRawMany<IFollowData>()
+            const followers = await query.getRawMany<IFollowersData>()
 
             const nextCursor = followers.length ? followers[followers.length - 1].id : null
 
