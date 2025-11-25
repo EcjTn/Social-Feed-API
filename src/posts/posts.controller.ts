@@ -14,7 +14,7 @@ export class PostsController {
 
   @Post()
   public async create(@User() user: IJwtPayload, @Body() post: NewPostDto) {
-    return await this.postService.add(user.sub, post.title, post.content)
+    return await this.postService.addPost(user.sub, post.title, post.content)
   }
 
 
@@ -25,7 +25,7 @@ export class PostsController {
 
   @Delete('/:id')
   public async delete(@User() user: IJwtPayload, @Param('id', ParseIntPipe) post_id: number) {
-    return await this.postService.remove(user.sub, post_id)
+    return await this.postService.removePost(user.sub, post_id)
   }
 
   @Patch('/:id')
@@ -33,7 +33,7 @@ export class PostsController {
     @Param('id', ParseIntPipe) post_id: number,
     @User() user: IJwtPayload,
     @Body() data: EditPostDto) {
-    return await this.postService.edit(user.sub, post_id, data.updatedContent)
+    return await this.postService.editPost(user.sub, post_id, data.updatedContent)
   }
 
 }

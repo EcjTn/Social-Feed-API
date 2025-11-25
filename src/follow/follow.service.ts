@@ -82,7 +82,7 @@ export class FollowService {
         }
     }
 
-    public async getFollowings(filter?: IUserFilter, cursor?: number): Promise<IFollowingDataResponse> {
+    public async getFollowing(filter?: IUserFilter, cursor?: number): Promise<IFollowingDataResponse> {
         const query = this.followRepo.createQueryBuilder('follow')
             .innerJoin('follow.following', 'following')
             .innerJoin('follow.follower', 'follower')

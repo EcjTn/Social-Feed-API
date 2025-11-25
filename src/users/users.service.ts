@@ -25,7 +25,7 @@ export class UsersService {
         return this.usersRepo.findOne({ where })
     }
 
-    public add(username: string, password: string, age: number, avatar: string) {
+    public addUser(username: string, password: string, age: number, avatar: string) {
         const newUser = this.usersRepo.create({ username, password, age, avatar })
         return this.usersRepo.save(newUser)
     }

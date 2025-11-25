@@ -14,7 +14,7 @@ export class PostsService {
         private readonly usersService: UsersService,
     ) { }
 
-    public async add(user_id: number, title: string, content: string) {
+    public async addPost(user_id: number, title: string, content: string) {
         const userRecord = await this.usersService.findById(user_id)
         if (!userRecord) throw new ForbiddenException()
 
@@ -28,7 +28,7 @@ export class PostsService {
         return { message: 'Successful!' }
     }
 
-    public async remove(user_id: number, post_id: number) {
+    public async removePost(user_id: number, post_id: number) {
         const result = await this.postsRepo.delete({
             user: { id: user_id },
             id: post_id
@@ -38,7 +38,7 @@ export class PostsService {
         return { message: 'Successfully deleted post!' }
     }
 
-    public async edit(user_id: number, post_id: number, content: string) {
+    public async editPost(user_id: number, post_id: number, content: string) {
         const result = await this.postsRepo.update(
             { user: { id: user_id }, id: post_id },
             { content },

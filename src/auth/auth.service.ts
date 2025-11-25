@@ -36,7 +36,7 @@ export class AuthService {
         const hashPassword = await bcrypt.hash(password, saltRound)
 
         try {
-            await this.usersService.add(username, hashPassword, age, avatar);
+            await this.usersService.addUser(username, hashPassword, age, avatar);
             return { message: 'Successfully Registered' };
         } catch (err) {
             console.error(err); // ?.message
