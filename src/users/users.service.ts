@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from './entity/user.entity';
 import { Repository } from 'typeorm';
 import bcrypt from 'bcrypt'
-import { IProfileData, IProfileDataPublic } from './interfaces/profile-data.interfaces';
+import { IProfileData, IProfileDataPublic, IUserSearchData } from './interfaces/profile-data.interfaces';
 import { Profile } from 'passport';
 
 @Injectable()
@@ -11,6 +11,32 @@ export class UsersService {
     constructor(
         @InjectRepository(Users) readonly usersRepo: Repository<Users>
     ) { }
+
+    public async search(username: string, cursor?: number) {
+        const limit = 10
+        const query = this.usersRepo.createQueryBuilder('user')
+            .select([
+                'user.id AS id',
+                'user.username AS username',
+                'user.avatar AS avatar',
+            ])
+            .orderBy('user.id', 'ASC')
+            .limit(limit)
+            .groupBy('user.id')
+
+        if (username) {
+            query.where('user.username ILIKE :username', { username: `%${username}%` })
+        }
+
+        if (cursor) {
+            query.andWhere('user.id > :cursor', { cursor })
+        }
+
+        const users = await query.getRawMany<IUserSearchData>()
+        const nextCursor = users.length ? users[users.length - 1].id : null
+
+        return { users, nextCursor }
+    }
 
     //for finding user's existense
     public findById(id: number) {
@@ -37,6 +63,7 @@ export class UsersService {
             .leftJoin('follows', 'followers', 'followers.following_id = user.id')
             .leftJoin('follows', 'followings', 'followings.follower_id = user.id')
             .select([
+                'user.id AS id',
                 'user.username AS username',
                 'user.avatar AS avatar',
                 'user.role AS role',
@@ -60,6 +87,7 @@ export class UsersService {
             .leftJoin('follows', 'followers', 'followers.following_id = user.id')
             .leftJoin('follows', 'followings', 'followings.follower_id = user.id')
             .select([
+                'user.id AS id',
                 'user.username AS username',
                 'user.role AS role',
                 'user.is_banned AS isBanned',
