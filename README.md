@@ -5,9 +5,9 @@
 ## Current Features
 
 - Auths
-- Access Token(JWT) & Refresh Token
-- Users
-- Likes
+- Access(JWT) & Refresh Token
+- Partial User Search
+- User Public Data
 - Posts
 - Comments
 - Followers
