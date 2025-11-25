@@ -1,5 +1,6 @@
 export interface IFollowData {
     username: string
+    avatar: string | null
     id: number
 }
 

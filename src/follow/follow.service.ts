@@ -62,7 +62,7 @@ export class FollowService {
         const query = this.followRepo.createQueryBuilder('follow')
             .innerJoin('follow.following', 'user')
             .innerJoin('follow.follower', 'follower')
-            .select(['follower.username AS username', 'follow.id AS id'])
+            .select(['follower.username AS username', 'follower.avatar AS avatar','follow.id AS id'])
             .orderBy('follow.id', 'DESC')
             .limit(this.limitLoad)
 
@@ -87,7 +87,7 @@ export class FollowService {
         const query = this.followRepo.createQueryBuilder('follow')
             .innerJoin('follow.following', 'following')
             .innerJoin('follow.follower', 'follower')
-            .select(['following.username AS username', 'follow.id AS id'])
+            .select(['following.username AS username', 'following.avatar AS avatar','follow.id AS id'])
             .orderBy('follow.id', 'DESC')
             .limit(this.limitLoad)
         

@@ -59,6 +59,7 @@ export class PostsService {
         .leftJoin('post.likes', 'likes')
         .select([
             'user.username AS username',
+            'user.avatar AS avatar',
             'post.id AS id',
             'post.title AS title',
             'post.content AS content',
@@ -67,7 +68,7 @@ export class PostsService {
         .addSelect('COUNT(DISTINCT comments.id)', 'commentCount')
         .addSelect('COUNT(DISTINCT likes.id)', 'likeCount')
         .groupBy('post.id')
-        .addGroupBy('user.username')
+        .addGroupBy('user.id')
         .orderBy('post.id', 'DESC')
         .limit(loadLimit)
 

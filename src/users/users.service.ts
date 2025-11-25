@@ -37,8 +37,8 @@ export class UsersService {
             .leftJoin('follows', 'followers', 'followers.following_id = user.id')
             .leftJoin('follows', 'followings', 'followings.follower_id = user.id')
             .select([
-                'user.profilePicture as avatar',
                 'user.username AS username',
+                'user.avatar AS avatar',
                 'user.role AS role',
                 'user.is_banned AS isBanned',
                 'user.bio AS bio'

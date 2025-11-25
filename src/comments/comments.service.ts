@@ -22,6 +22,7 @@ export class CommentsService {
             .leftJoin('comment.likes', 'likes')
             .select([
                 'user.username AS username',
+                'user.avatar AS avatar',
                 'comment.id AS id',
                 'comment.content AS content',
                 'comment.created_at AS createdAt'
@@ -31,7 +32,7 @@ export class CommentsService {
             .where('post.id = :post_id', { post_id })
             .andWhere('comment.parent_id IS NULL')
             .limit(this.commentsLimitLoad)
-            .groupBy('user.username')
+            .groupBy('user.id')
             .addGroupBy('comment.id')
             .orderBy('comment.id', 'DESC') // NEWEST TO OLDEST
 
@@ -60,6 +61,7 @@ export class CommentsService {
             .leftJoin('comments', 'replies', 'replies.parent_id = comment.id')
             .select([
                 'user.username AS username',
+                'user.avatar AS avatar',
                 'comment.id AS id',
                 'comment.content AS content',
                 'comment.created_at AS createdAt'
@@ -68,7 +70,7 @@ export class CommentsService {
             .addSelect('COUNT(DISTINCT likes.id)', 'likeCount')
             .where('comment.parent_id = :parent_id', { parent_id })
             .limit(this.commentsLimitLoad)
-            .groupBy('user.username')
+            .groupBy('user.id')
             .addGroupBy('comment.id')
             .orderBy('comment.id', 'ASC') // OLDEST TO NEWEST;
 

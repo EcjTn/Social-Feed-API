@@ -1,5 +1,6 @@
 export interface PostData {
     username: string
+    avatar: string | null
     id: number
     title: string
     content: string
