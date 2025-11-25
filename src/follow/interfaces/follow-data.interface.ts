@@ -9,8 +9,7 @@ export interface IFollowersDataResponse {
     nextCursor: number | null
 }
 
-export interface IFollowingData extends IFollowersData {}
-
+export type IFollowingData = IFollowersData
 export interface IFollowingDataResponse {
     followings: IFollowingData[]
     nextCursor: number | null
