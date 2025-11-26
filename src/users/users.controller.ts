@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Query, Req, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { UsersService } from './users.service';
 import type { Request } from 'express';
@@ -10,7 +10,7 @@ import { parse } from 'path';
 import { parseCursor } from 'src/utils/cursor-parser.util';
 
 @Controller('users')
-//@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 export class UsersController {
 
     constructor(private readonly usersService: UsersService){}
@@ -33,6 +33,11 @@ export class UsersController {
     @Patch('/bio')
     public async updateUserBio(@User() user: IJwtPayload, @Body() newBio: BioDto){
         return await this.usersService.updateBio(user.sub, newBio.bio)
+    }
+
+    @Delete('/me/delete')
+    public async deleteUser(@User() user: IJwtPayload){
+        return await this.usersService.deleteUser(user.sub)
     }
 
      @Get('/:username')

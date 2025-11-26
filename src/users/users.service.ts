@@ -89,6 +89,7 @@ export class UsersService {
             .select([
                 'user.id AS id',
                 'user.username AS username',
+                'user.avatar AS avatar',
                 'user.role AS role',
                 'user.is_banned AS isBanned',
                 'user.bio AS bio'
@@ -106,7 +107,7 @@ export class UsersService {
     public async updateBio(id: number, bio: string) {
         const userRecord = await this.usersRepo.findOne({ where: { id } })
 
-        if (!userRecord) throw new NotFoundException()
+        if (!userRecord) throw new NotFoundException('User not found.')
 
         userRecord.bio = bio
         await this.usersRepo.save(userRecord)
@@ -124,6 +125,13 @@ export class UsersService {
         await this.usersRepo.save(userRecord)
 
         return { message: 'Successfully changed password.' }
+    }
+
+    public async deleteUser(id: number) {
+        const result = await this.usersRepo.delete({ id });
+        if(!result.affected) throw new BadRequestException('User not found.')
+
+        return { message: 'Successfully deleted user.' };
     }
 
 
