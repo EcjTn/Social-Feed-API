@@ -40,7 +40,7 @@ export class UsersService {
 
     //for finding user's existense
     public findById(id: number) {
-        return this.usersRepo.findOne({ where: { id }, select: ['id'] })
+        return this.usersRepo.findOne({ where: { id, is_banned: false }, select: ['id'] })
     }
 
     //Used for auths -- check bans
