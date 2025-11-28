@@ -17,7 +17,7 @@ export class CommentsController {
     return await this.commentsService.getRepliesByParentId(parent_id, parseCursor(cursor))
   }
 
-  @Post('/:parentId/reply')
+  @Post('/:parentId/replies')
   public async addReply(@User() user: IJwtPayload, @Param('parentId', ParseIntPipe) parent_id: number, @Body() data: CommentDto) {
     return await this.commentsService.addReply(user.sub, parent_id, data.content)
   }
