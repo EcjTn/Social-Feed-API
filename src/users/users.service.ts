@@ -57,7 +57,7 @@ export class UsersService {
     }
 
     //only used for public purposes.
-    public async getPublicProfile(username: string): Promise<IProfileDataPublic[]> {
+    public async getPublicProfile(currentUserId: number, username: string): Promise<IProfileDataPublic[]> {
         const query = this.usersRepo.createQueryBuilder('user')
             .leftJoin('posts', 'post', 'post.user_id = user.id')
             .leftJoin('follows', 'followers', 'followers.following_id = user.id')
@@ -73,6 +73,12 @@ export class UsersService {
             .addSelect('COUNT(DISTINCT post.id)', 'postCount')
             .addSelect('COUNT(DISTINCT followers.id)', 'followerCount')
             .addSelect('COUNT(DISTINCT followings.id)', 'followingCount')
+            .addSelect(`
+                EXISTS(
+                    SELECT 1 FROM follows as f
+                    WHERE f.follower_id = :currentUserId
+                    AND f.following_id = user.id) AS "followedByMe"`)
+                    .setParameter('currentUserId', currentUserId)
             .where('user.username = :username', { username })
             .groupBy('user.id')
 

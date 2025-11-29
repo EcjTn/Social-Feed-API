@@ -69,9 +69,8 @@ export class PostsService {
         .addSelect('COUNT(DISTINCT likes.id)', 'likeCount')
         .addSelect(`EXISTS(
             SELECT 1 FROM post_likes AS likes 
-            WHERE post.id = likes.post_id AND likes.user_id = :userId
-        )`, 'likedByMe')
-        .setParameter('userId', user_id)
+            WHERE post.id = likes.post_id AND likes.user_id = :userId) AS "likedByMe"`)
+            .setParameter('userId', user_id)
         .groupBy('post.id')
         .addGroupBy('user.id')
         .orderBy('post.id', 'DESC')

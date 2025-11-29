@@ -41,8 +41,8 @@ export class UsersController {
     }
 
      @Get('/:username')
-    public async getUserById(@Param('username') username: string){
-        return await this.usersService.getPublicProfile(username)
+    public async getUserById(@User() user: IJwtPayload,@ Param('username') username: string){
+        return await this.usersService.getPublicProfile(user.sub, username)
     }
 
 }
