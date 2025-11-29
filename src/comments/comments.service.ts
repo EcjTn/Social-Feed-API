@@ -59,7 +59,7 @@ export class CommentsService {
 
     }
 
-    public async getRepliesByParentId(parent_id: number, cursor?: number): Promise<ICommentsResponse> {
+    public async getRepliesByParentId(user_id: number, parent_id: number, cursor?: number): Promise<ICommentsResponse> {
         const query = this.commentRepo.createQueryBuilder('comment')
             .innerJoin('comment.user', 'user')
             .leftJoin('comment.likes', 'likes')
@@ -73,6 +73,11 @@ export class CommentsService {
             ])
             .addSelect('COUNT(replies.id)', 'repliesCount')
             .addSelect('COUNT(DISTINCT likes.id)', 'likeCount')
+            .addSelect(`
+                EXISTS(
+                    SELECT 1 FROM comment_likes cl
+                    WHERE cl.comment_id = comment.id AND cl.user_id = :user_id) AS "likedByMe"
+                `).setParameter('user_id', user_id)
             .where('comment.parent_id = :parent_id', { parent_id })
             .limit(this.commentsLimitLoad)
             .groupBy('user.id')

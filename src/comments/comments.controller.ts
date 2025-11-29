@@ -13,8 +13,8 @@ export class CommentsController {
 
   // Replies to a specific comment
   @Get('/:parentId/replies')
-  public async getRepliesByParentId(@Param('parentId', ParseIntPipe) parent_id: number, @Query('cursor') cursor?: string) {
-    return await this.commentsService.getRepliesByParentId(parent_id, parseCursor(cursor))
+  public async getRepliesByParentId(@User() user: IJwtPayload, @Param('parentId', ParseIntPipe) parent_id: number, @Query('cursor') cursor?: string) {
+    return await this.commentsService.getRepliesByParentId(user.sub, parent_id, parseCursor(cursor))
   }
 
   @Post('/:parentId/replies')
