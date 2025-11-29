@@ -14,7 +14,7 @@ export class CommentsService {
     ) { }
 
     //TOP COMMENTS ONLY
-    public async getCommentsByPostId(post_id: number, cursor?: number): Promise<ICommentsResponse> {
+    public async getCommentsByPostId(user_id: number, post_id: number, cursor?: number): Promise<ICommentsResponse> {
         const query = this.commentRepo.createQueryBuilder('comment')
             .innerJoin('comment.user', 'user')
             .leftJoin('comment.post', 'post')
@@ -29,6 +29,11 @@ export class CommentsService {
             ])
             .addSelect('COUNT(DISTINCT replies.id)', 'repliesCount')
             .addSelect('COUNT(DISTINCT likes.id)', 'likeCount')
+            .addSelect(`
+                EXISTS(
+                    SELECT 1 FROM comment_likes cl
+                    WHERE cl.comment_id = comment.id AND cl.user_id = :user_id) AS "likedByMe"
+                `).setParameter('user_id', user_id)
             .where('post.id = :post_id', { post_id })
             .andWhere('comment.parent_id IS NULL')
             .limit(this.commentsLimitLoad)

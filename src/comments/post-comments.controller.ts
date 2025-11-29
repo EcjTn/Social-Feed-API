@@ -13,10 +13,11 @@ export class PostCommentsController {
 
   @Get()
   public async getCommentsByPostId(
+    @User() user: IJwtPayload,
     @Param('id', ParseIntPipe) postId: number,
     @Query('cursor') cursor?: string
   ) {
-    return this.commentsService.getCommentsByPostId(postId, parseCursor(cursor));
+    return this.commentsService.getCommentsByPostId(user.sub, postId, parseCursor(cursor));
   }
 
   @Post()

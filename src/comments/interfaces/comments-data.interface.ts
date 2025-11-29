@@ -6,6 +6,7 @@ export interface IComment {
     createdAt: string;
     repliesCount: number;
     likeCount: number;
+    likedByMe: boolean;
 }
 
 
