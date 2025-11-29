@@ -12,11 +12,11 @@ export class UserPostsController {
 
   @Get('/me/posts')
   public async getMyPost(@User() user: IJwtPayload, @Query('cursor')cursor?: string) {
-    return await this.postService.getPosts({userId:user.sub}, parseCursor(cursor))
+    return await this.postService.getPosts(user.sub, {userId: user.sub}, parseCursor(cursor))
   }
 
   @Get('/:username/posts')
-  public async getUsersPost(@Param('username') username: string, @Query('cursor') cursor?: string) {
-    return await this.postService.getPosts({username}, parseCursor(cursor))
+  public async getUsersPost(@User() user: IJwtPayload, @Param('username') username: string, @Query('cursor') cursor?: string) {
+    return await this.postService.getPosts(user.sub, {username}, parseCursor(cursor))
   }
 }

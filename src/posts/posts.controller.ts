@@ -19,8 +19,8 @@ export class PostsController {
 
 
   @Get()
-  public async getPosts(@Query('cursor') cursor?: string) {
-    return this.postService.getPosts(undefined, parseCursor(cursor))
+  public async getPosts(@User() user: IJwtPayload,@Query('cursor') cursor?: string) {
+    return this.postService.getPosts(user.sub, undefined, parseCursor(cursor))
   }
 
   @Delete('/:id')

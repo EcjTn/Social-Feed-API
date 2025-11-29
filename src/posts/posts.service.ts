@@ -51,7 +51,7 @@ export class PostsService {
         return { message: 'Successfully edited post.' };
     }
 
-    public async getPosts(filter?: IUserFilter, cursor?: number): Promise<IPostDataResponse> {
+    public async getPosts(user_id: number, filter?: IUserFilter, cursor?: number): Promise<IPostDataResponse> {
     const loadLimit = 5
     const query = this.postsRepo.createQueryBuilder('post')
         .leftJoin('post.comments', 'comments')
@@ -67,6 +67,11 @@ export class PostsService {
         ])
         .addSelect('COUNT(DISTINCT comments.id)', 'commentCount')
         .addSelect('COUNT(DISTINCT likes.id)', 'likeCount')
+        .addSelect(`EXISTS(
+            SELECT 1 FROM post_likes AS likes 
+            WHERE post.id = likes.post_id AND likes.user_id = :userId
+        )`, 'likedByMe')
+        .setParameter('userId', user_id)
         .groupBy('post.id')
         .addGroupBy('user.id')
         .orderBy('post.id', 'DESC')
