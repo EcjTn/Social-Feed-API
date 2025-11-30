@@ -88,6 +88,15 @@ export class PostsService {
     const nextCursor = posts.length ? posts[posts.length - 1].id : null
 
     return { posts, nextCursor }
-}
+    }
+
+    public async removePostForce(post_id: number) {
+        const result = await this.postsRepo.delete({ id: post_id });
+        if (!result.affected) {
+            throw new BadRequestException('Post not found.');
+        }
+
+        return { message: 'Post force deleted successfully.'  };
+    }
 
 }

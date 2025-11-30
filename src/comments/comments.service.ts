@@ -166,4 +166,13 @@ export class CommentsService {
         }
     }
 
+    public async deleteCommentForce(comment_id: number) {
+        const result = await this.commentRepo.delete({ id: comment_id });
+        if (!result.affected) {
+            throw new BadRequestException('Comment not found.');
+        }
+
+        return { message: 'Comment force deleted successfully.'  };
+    }
+
 }
