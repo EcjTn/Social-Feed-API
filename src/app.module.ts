@@ -11,6 +11,7 @@ import { throttlerOptionsSync } from './configs/throttler.config';
 import { APP_GUARD } from '@nestjs/core';
 import { CommentsModule } from './comments/comments.module';
 import { FollowModule } from './follow/follow.module';
+import { StaffModule } from './staff/staff.module';
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { FollowModule } from './follow/follow.module';
     PostsModule,
     LikesModule,
     CommentsModule,
-    FollowModule
+    FollowModule,
+    StaffModule
   ],
 
   providers: [{
