@@ -37,12 +37,12 @@ export class UsersController {
 
     @Delete('/me/delete')
     public async deleteUser(@User() user: IJwtPayload){
-        return await this.usersService.deleteUser(user.sub)
+        return await this.usersService.deleteUserById(user.sub)
     }
 
      @Get('/:username')
     public async getUserById(@User() user: IJwtPayload,@ Param('username') username: string){
-        return await this.usersService.getPublicProfile(user.sub, username)
+        return await this.usersService.getPublicProfile(username, user.sub)
     }
 
 }
