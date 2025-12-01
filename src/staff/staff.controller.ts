@@ -15,13 +15,13 @@ export class StaffController {
     private readonly usersService: UsersService,
   ) {}
 
-  @Patch('/user/:id/role')
+  @Patch('/users/:id/role')
   @Roles(UserRole.Admin)
   public async setUserRole(@Param('id', ParseIntPipe) id: number, @Body() data: SetRoleDto) {
     return this.staffService.setRole(id, data.role)
   }
 
-  @Delete('/user/:id/delete')
+  @Delete('/users/:id/delete')
   @Roles(UserRole.Admin)
   public async getUserData(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.deleteUserById(id)
