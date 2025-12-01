@@ -15,7 +15,7 @@ export class FollowService {
     ) { }
 
     public async follow(follower_id: number, followingUsername: string) {
-        const targetUser = await this.usersService.findByUser(followingUsername)
+        const targetUser = await this.usersService.findByUser(followingUsername, { checkBanned: true })
         if (!targetUser) throw new NotFoundException('Target user not found.')
 
 

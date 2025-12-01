@@ -12,6 +12,15 @@ export class StaffService {
         private readonly postsService: PostsService,
     ) {}
 
+    public async getUserData(id: number, currentUserId: number) {
+        const user = await this.usersService.findById(id)
+        if(!user) throw new BadRequestException('User not found.')
+
+        const publicData = await this.usersService.getPublicProfile(user.username, currentUserId)
+
+        return { user, publicData }
+    }
+
     public async setRole(id: number, role: string) {
         const userRecord = await this.usersService.findById(id)
         if (!userRecord) throw new Error('User not found.')
@@ -27,10 +36,6 @@ export class StaffService {
                 throw new BadRequestException('Invalid role.')
         }
 
-    }
-
-    public deleteUser(id: number) {
-        return this.usersService.deleteUserById(id)
     }
 
 }

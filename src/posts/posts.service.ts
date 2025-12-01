@@ -15,8 +15,8 @@ export class PostsService {
     ) { }
 
     public async addPost(user_id: number, title: string, content: string) {
-        const userRecord = await this.usersService.findById(user_id)
-        if (!userRecord) throw new ForbiddenException()
+        const userRecord = await this.usersService.findById(user_id, true)
+        if (!userRecord) throw new BadRequestException('User not found.')
 
         const newPost = this.postsRepo.create({
             title,

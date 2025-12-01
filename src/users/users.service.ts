@@ -40,7 +40,8 @@ export class UsersService {
     }
 
     //for finding user's existense
-    public findById(id: number) {
+    public findById(id: number, checkBanned?: boolean | null) {
+        if (!checkBanned) return this.usersRepo.findOne({ where: { id } })
         return this.usersRepo.findOne({ where: { id, is_banned: false } })
     }
 
@@ -58,7 +59,8 @@ export class UsersService {
     }
 
     //only used for public purposes.
-    public async getPublicProfile(currentUserId: number, username: string): Promise<IProfileDataPublic[]> {
+    public async getPublicProfile(username: string, currentUserId?: number): Promise<IProfileDataPublic[]> {
+
         const query = this.usersRepo.createQueryBuilder('user')
             .leftJoin('posts', 'post', 'post.user_id = user.id')
             .leftJoin('follows', 'followers', 'followers.following_id = user.id')
@@ -79,7 +81,7 @@ export class UsersService {
                     SELECT 1 FROM follows as f
                     WHERE f.follower_id = :currentUserId
                     AND f.following_id = user.id) AS "followedByMe"`)
-                    .setParameter('currentUserId', currentUserId)
+                    .setParameter('currentUserId', currentUserId || 0)
             .where('user.username = :username', { username })
             .groupBy('user.id')
 
@@ -170,6 +172,26 @@ export class UsersService {
         await this.usersRepo.save(userRecord)
 
         return { message: 'Successfully demoted user to user.' }
+    }
+
+    public async banUserById(id: number) {
+        const userRecord = await this.findById(id, true)
+        if (!userRecord) throw new NotFoundException('User not found or already banned.')
+
+        userRecord.is_banned = true
+        await this.usersRepo.save(userRecord)
+
+        return { message: 'Successfully banned user.' }
+    }
+
+    public async unbanUserById(id: number) {
+        const userRecord = await this.findById(id)
+        if (!userRecord) throw new NotFoundException('User not found.')
+
+        userRecord.is_banned = false
+        await this.usersRepo.save(userRecord)
+
+        return { message: 'Successfully unbanned user.' }
     }
 
 }

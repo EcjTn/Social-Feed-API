@@ -42,7 +42,7 @@ export class UsersController {
 
      @Get('/:username')
     public async getUserById(@User() user: IJwtPayload,@ Param('username') username: string){
-        return await this.usersService.getPublicProfile(user.sub, username)
+        return await this.usersService.getPublicProfile(username, user.sub)
     }
 
 }
