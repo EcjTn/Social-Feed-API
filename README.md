@@ -20,3 +20,4 @@
 - Dockerized
 - Recaptcha Validation(v3)
 - Cursor Based Pagination
+- Role-Based Access Control(RBAC)
