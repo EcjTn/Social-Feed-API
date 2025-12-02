@@ -113,6 +113,10 @@ export class UsersService {
         return userInfo
     }
 
+    public async getLikedPosts(user_id: number) {}
+
+    public async getLikedComments(user_id: number) {}
+
     public async updateBio(id: number, bio: string) {
         const userRecord = await this.usersRepo.findOne({ where: { id } })
 
