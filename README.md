@@ -21,3 +21,5 @@
 - Recaptcha Validation(v3)
 - Cursor Based Pagination
 - Role-Based Access Control(RBAC)
+- Ban/Unban users
+- View History
