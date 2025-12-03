@@ -30,6 +30,11 @@ export class UsersController {
         return await this.usersService.getLikedPosts(user.sub, parseCursor(cursor))
     }
 
+    @Get('/me/history/comments')
+    public async getUserComments(@User() user: IJwtPayload, @Query('cursor') cursor?: string){
+        return await this.usersService.getUserComments(user.sub, parseCursor(cursor))
+    }
+
     @Patch('/me/change-password')
     public async changeUserPassword(@User() user: IJwtPayload, @Body()data: ChangePasswordDto){
         return await this.usersService.changePassword(user.sub, data.newPassword)

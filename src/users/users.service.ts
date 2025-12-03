@@ -6,7 +6,7 @@ import bcrypt from 'bcrypt'
 import { IProfileData, IProfileDataPublic, IUserSearchData } from './interfaces/profile-data.interfaces';
 import { Profile } from 'passport';
 import { UserRole } from 'src/common/enums/user-role.enum';
-import { IHistoryLikedPostsData, IHistoryLikedPostsResponse } from './interfaces/history-data.interface';
+import { IHistoryCommentData, IHistoryCommentResponse, IHistoryLikedPostsData, IHistoryLikedPostsResponse } from './interfaces/history-data.interface';
 
 @Injectable()
 export class UsersService {
@@ -145,7 +145,31 @@ export class UsersService {
         return { likedPosts, nextCursor }
     }
 
-    public async getLikedComments(user_id: number) {}
+    public async getUserComments(user_id: number, cursor?: number): Promise<IHistoryCommentResponse> {
+        const query = this.usersRepo.createQueryBuilder('user')
+            .innerJoin('comments', 'comment', 'comment.user_id = user.id')
+            .innerJoin('posts', 'post', 'post.id = comment.post_id')
+            .select([
+                'comment.id AS comment_id',
+                'post.id AS post_id',
+                'post.title AS post_title',
+                'user.username AS username',
+                'user.avatar AS avatar',
+                'comment.content AS comment_content',
+                'comment.created_at AS commented_at'
+            ])
+            .where('user.id = :user_id', { user_id })
+            .limit(this.hisoryLimit)
+            .orderBy('comment.created_at', 'DESC')
+
+        if (cursor) { query.andWhere('comment.id < :cursor', { cursor }) }
+
+        const comments = await query.getRawMany<IHistoryCommentData>()
+        //Comment ID for cursor pagination
+        const nextCursor = comments.length ? comments[comments.length - 1].comment_id : null
+
+        return { comments, nextCursor }
+    }
 
     public async updateBio(id: number, bio: string) {
         const userRecord = await this.usersRepo.findOne({ where: { id } })

@@ -17,6 +17,7 @@ export interface IHistoryLikedPostsResponse {
 export interface IHistoryCommentData {
     comment_id: number
     post_id: number
+    post_title: string
     username: string
     avatar: string
     content: string
