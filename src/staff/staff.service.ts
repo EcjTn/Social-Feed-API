@@ -8,8 +8,6 @@ import { UsersService } from 'src/users/users.service';
 export class StaffService {
     constructor(
         private readonly usersService: UsersService,
-        private readonly commentsService: CommentsService,
-        private readonly postsService: PostsService,
     ) {}
 
     public async getUserData(id: number, currentUserId: number) {

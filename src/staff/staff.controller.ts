@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Query, UseGuards } from '@nestjs/common';
 import { StaffService } from './staff.service';
 import { Roles } from './decorators/roles.decorator';
 import { UserRole } from 'src/common/enums/user-role.enum';
@@ -10,6 +10,7 @@ import { User } from 'src/common/decorators/user.decorator';
 import type { IJwtPayload } from 'src/common/interfaces/jwt-payload.interface';
 import { CommentsService } from 'src/comments/comments.service';
 import { PostsService } from 'src/posts/posts.service';
+import { parseCursor } from 'src/utils/cursor-parser.util';
 
 @Controller('staff')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -25,6 +26,18 @@ export class StaffController {
   @Roles(UserRole.Admin)
   public async getUserData(@Param('id', ParseIntPipe) id: number, @User()user: IJwtPayload) {
     return this.staffService.getUserData(id, user.sub)
+  }
+
+  @Get('/users/:id/history/liked-posts')
+  @Roles(UserRole.Admin, UserRole.Moderator)
+  public async getUsersLikedPosts(@Param('id', ParseIntPipe) id: number, @Query('cursor') cursor?: string) {
+    return this.usersService.getLikedPosts(id, parseCursor(cursor))
+  }
+
+  @Get('/users/:id/history/comments')
+  @Roles(UserRole.Admin, UserRole.Moderator)
+  public async getUsersLikedComments(@Param('id', ParseIntPipe) id: number, @Query('cursor') cursor?: string) {
+    return this.usersService.getUserComments(id, parseCursor(cursor))
   }
 
   @Patch('/users/:id/ban')
