@@ -90,8 +90,16 @@ export class AuthService {
 
         //Check Current RT existence
         const hashPlainToken = crypto.createHash('sha256').update(refreshToken).digest('hex')
-        const tokenRecord = await this.refreshRepo.findOne({ where: { hash_token: hashPlainToken }, relations: ['user'] })
-        if (!tokenRecord) throw new UnauthorizedException('Invalid refresh token')
+        const tokenRecord = await this.refreshRepo.findOne({ 
+            where: { hash_token: hashPlainToken,
+            user: { is_banned: false } },
+            relations: ['user'] 
+        })
+        
+        if (!tokenRecord) {
+            this.refreshRepo.delete({ hash_token: hashPlainToken }) //cleanup current token given
+            throw new UnauthorizedException('Invalid refresh token or user is banned.')
+        }
 
 
         const currentDate = new Date()
