@@ -25,6 +25,11 @@ export class UsersController {
         return await this.usersService.getOwnProfile(user.sub)
     }
 
+    @Get('/me/history/liked-posts')
+    public async getLikedPosts(@User() user: IJwtPayload, @Query('cursor') cursor?: string){
+        return await this.usersService.getLikedPosts(user.sub, parseCursor(cursor))
+    }
+
     @Patch('/me/change-password')
     public async changeUserPassword(@User() user: IJwtPayload, @Body()data: ChangePasswordDto){
         return await this.usersService.changePassword(user.sub, data.newPassword)

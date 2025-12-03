@@ -3,7 +3,7 @@ export interface IComment {
     avatar: string | null;
     id: number;
     content: string;
-    createdAt: string;
+    created_at: string;
     repliesCount: number;
     likeCount: number;
     likedByMe: boolean;

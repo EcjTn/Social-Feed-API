@@ -6,12 +6,15 @@ import bcrypt from 'bcrypt'
 import { IProfileData, IProfileDataPublic, IUserSearchData } from './interfaces/profile-data.interfaces';
 import { Profile } from 'passport';
 import { UserRole } from 'src/common/enums/user-role.enum';
+import { IHistoryLikedPostsData, IHistoryLikedPostsResponse } from './interfaces/history-data.interface';
 
 @Injectable()
 export class UsersService {
     constructor(
         @InjectRepository(Users) readonly usersRepo: Repository<Users>
     ) { }
+
+    private readonly hisoryLimit = 5
 
     public async search(username: string, cursor?: number) {
         const limit = 10
@@ -113,7 +116,34 @@ export class UsersService {
         return userInfo
     }
 
-    public async getLikedPosts(user_id: number) {}
+    public async getLikedPosts(user_id: number, cursor?: number): Promise<IHistoryLikedPostsResponse> {
+        const query = this.usersRepo.createQueryBuilder('user')
+            .innerJoin('post_likes', 'like', 'like.user_id = user.id')
+            .innerJoin('posts', 'post', 'post.id = like.post_id')
+            .innerJoin(Users, 'ownerOfPost', 'ownerOfPost.id = post.user_id')
+            .select([
+                'like.id AS like_id',
+                'post.id AS post_id',
+                'ownerOfPost.username AS username',
+                'ownerOfPost.avatar AS avatar',
+                'post.title AS title',
+                'post.content AS content',
+                'post.created_at AS post_created_at',
+                'like.created_at AS liked_at'
+            ])
+            .where('user.id = :user_id', { user_id })
+            .limit(this.hisoryLimit)
+            .orderBy('like.created_at', 'DESC')
+
+        if (cursor) { query.andWhere('like.id < :cursor', { cursor }) }
+
+        const likedPosts = await query.getRawMany<IHistoryLikedPostsData>()
+
+        //Like ID for cursor pagination
+        const nextCursor = likedPosts.length ? likedPosts[likedPosts.length - 1].like_id : null
+
+        return { likedPosts, nextCursor }
+    }
 
     public async getLikedComments(user_id: number) {}
 

@@ -16,4 +16,7 @@ export class PostLikes {
     @ManyToOne(() => Users, { onDelete: 'CASCADE'})
     @JoinColumn({name: 'user_id'})
     user: Users
+
+    @Column({type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP'})
+    created_at: Date
 }

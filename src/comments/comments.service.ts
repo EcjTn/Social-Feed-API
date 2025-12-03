@@ -25,7 +25,7 @@ export class CommentsService {
                 'user.avatar AS avatar',
                 'comment.id AS id',
                 'comment.content AS content',
-                'comment.created_at AS createdAt'
+                'comment.created_at AS created_at',
             ])
             .addSelect('COUNT(DISTINCT replies.id)', 'repliesCount')
             .addSelect('COUNT(DISTINCT likes.id)', 'likeCount')
@@ -69,7 +69,7 @@ export class CommentsService {
                 'user.avatar AS avatar',
                 'comment.id AS id',
                 'comment.content AS content',
-                'comment.created_at AS createdAt'
+                'comment.created_at AS created_at',
             ])
             .addSelect('COUNT(replies.id)', 'repliesCount')
             .addSelect('COUNT(DISTINCT likes.id)', 'likeCount')
