@@ -21,7 +21,7 @@ export class AuthService {
         private readonly jwtService: JwtService
     ) { }
 
-    public async registerUser(username: string, password: string, age: number, recaptchaToken: string) {
+    public async registerUser(username: string, password: string, email: string, recaptchaToken: string) {
 
         const avatar = generateIdenticon(username)
 
@@ -36,7 +36,7 @@ export class AuthService {
         const hashPassword = await bcrypt.hash(password, saltRound)
 
         try {
-            await this.usersService.addUser(username, hashPassword, age, avatar);
+            await this.usersService.addUser(username, hashPassword, email, avatar);
             return { message: 'Successfully Registered' };
         } catch (err) {
             console.error(err); // ?.message

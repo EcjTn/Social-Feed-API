@@ -23,8 +23,8 @@ export class Users {
     } )
     role: UserRole
 
-    @Column()
-    age: number
+    @Column( {unique: true, nullable: true} )
+    email: string
 
     @Column()
     password: string

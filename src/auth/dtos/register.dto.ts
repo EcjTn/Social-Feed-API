@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsNotEmpty, IsNumber, IsString, Length, Matches, Min, MinLength } from 'class-validator'
+import { IsEmail, IsNotEmpty, IsNumber, IsString, Length, Matches, Min, MinLength } from 'class-validator'
 
 export class RegisterUserDto {
     @ApiProperty({example: 'JohnDoe'})
@@ -15,11 +15,12 @@ export class RegisterUserDto {
     @MinLength(8, {message: 'Password is too short(must be above 8 characters).'})
     readonly password: string
 
-    @ApiProperty({example: '17'})
+    @ApiProperty({example: 'johndoe@gmail.com'})
+    @IsString()
     @IsNotEmpty()
-    @IsNumber()
-    @Min(14, {message: 'Age not allowed(must be 14 or above)'})
-    age: number
+    @Length(5, 255)
+    @IsEmail()
+    email: string
 
     @ApiProperty({example: 'randomStringGeneratedFromRecaptcha'})
     @IsNotEmpty()

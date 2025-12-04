@@ -14,7 +14,7 @@ export class AuthController {
   @Post('/register')
   @HttpCode(HttpStatus.CREATED)
   public async registerUser(@Body() data: RegisterUserDto) {
-    return await this.authService.registerUser(data.username, data.password, data.age, data.recaptchaToken)
+    return await this.authService.registerUser(data.username, data.password, data.email, data.recaptchaToken)
   }
 
   @Post('/login')
