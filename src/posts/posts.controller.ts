@@ -23,6 +23,11 @@ export class PostsController {
     return this.postService.getPosts(user.sub, undefined, parseCursor(cursor))
   }
 
+  @Get('/:id')
+  public async getPost(@User() user: IJwtPayload, @Param('id', ParseIntPipe) post_id: number) {
+    return await this.postService.getPostById(post_id, user.sub)
+  }
+
   @Delete('/:id')
   public async delete(@User() user: IJwtPayload, @Param('id', ParseIntPipe) post_id: number) {
     return await this.postService.removePost(user.sub, post_id)

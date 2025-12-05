@@ -90,6 +90,36 @@ export class PostsService {
     return { posts, nextCursor }
     }
 
+    public async getPostById(post_id: number, user_id: number): Promise<IPostData> {
+        const query = this.postsRepo.createQueryBuilder('post')
+            .leftJoin('post.comments', 'comments')
+            .innerJoin('post.user', 'user')
+            .leftJoin('post.likes', 'likes')            
+            .select([
+                'user.username AS username',
+                'user.avatar AS avatar',
+                'post.id AS id',
+                'post.title AS title',
+                'post.content AS content',
+                'post.created_at AS created_at',
+            ])
+            .addSelect('COUNT(DISTINCT comments.id)', 'commentCount')
+            .addSelect('COUNT(DISTINCT likes.id)', 'likeCount')
+            .addSelect(`EXISTS(
+                SELECT 1 FROM post_likes AS likes 
+                WHERE post.id = likes.post_id AND likes.user_id = :userId) AS "likedByMe"`)
+                .setParameter('userId', user_id)
+            .where('post.id = :post_id', { post_id })
+            .groupBy('post.id')
+            .addGroupBy('user.id')
+            .getRawOne<IPostData>();
+
+        const post = await query;
+        if (!post) throw new BadRequestException('Post not found.');
+
+        return post;
+    }
+
     public async removePostForce(post_id: number) {
         const result = await this.postsRepo.delete({ id: post_id });
         if (!result.affected) {
