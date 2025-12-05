@@ -7,7 +7,7 @@ export interface IPostData {
     created_at: Date
     commentCount: number
     likeCount: number
-    likedByMe: boolean
+    likedByMe?: boolean
 }
 
 export interface IPostDataResponse {

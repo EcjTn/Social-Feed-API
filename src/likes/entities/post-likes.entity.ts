@@ -1,5 +1,5 @@
 import { Users } from "src/users/entity/user.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn, Unique } from "typeorm";
 import { Posts } from "src/posts/entity/post.entity"
 
 @Entity('post_likes')

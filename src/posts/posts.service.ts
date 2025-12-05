@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Posts } from './entity/post.entity';
@@ -6,13 +6,18 @@ import { UsersService } from 'src/users/users.service';
 import { verifyRecaptcha } from 'src/auth/utils/recaptcha.util';
 import { IUserFilter } from '../common/interfaces/user-filter.interface';
 import { IPostData, IPostDataResponse } from './interfaces/post-data.interface';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import type { Cache } from 'cache-manager';
 
 @Injectable()
 export class PostsService {
     constructor(
         @InjectRepository(Posts) private readonly postsRepo: Repository<Posts>,
         private readonly usersService: UsersService,
+        @Inject(CACHE_MANAGER) private readonly cacheManager: Cache
     ) { }
+
+    private readonly postsCacheTTL = 120_000; // 2 minutes
 
     public async addPost(user_id: number, title: string, content: string) {
         const userRecord = await this.usersService.findById(user_id, true)
@@ -91,7 +96,17 @@ export class PostsService {
     }
 
     public async getPostById(post_id: number, user_id: number): Promise<IPostData> {
-        const query = this.postsRepo.createQueryBuilder('post')
+        const cacheKey = `post:${post_id}:metadata`;
+        const likedByMe = await this.postsRepo.createQueryBuilder('post')
+            .innerJoin('post.likes', 'likes')
+            .where('post.id = :post_id', { post_id })
+            .andWhere('likes.user_id = :user_id', { user_id })
+            .getCount() > 0;
+
+        const cachedPost = await this.cacheManager.get<IPostData>(cacheKey);
+        if(cachedPost) return {...cachedPost, likedByMe}
+
+        const post = await this.postsRepo.createQueryBuilder('post')
             .leftJoin('post.comments', 'comments')
             .innerJoin('post.user', 'user')
             .leftJoin('post.likes', 'likes')            
@@ -105,19 +120,16 @@ export class PostsService {
             ])
             .addSelect('COUNT(DISTINCT comments.id)', 'commentCount')
             .addSelect('COUNT(DISTINCT likes.id)', 'likeCount')
-            .addSelect(`EXISTS(
-                SELECT 1 FROM post_likes AS likes 
-                WHERE post.id = likes.post_id AND likes.user_id = :userId) AS "likedByMe"`)
-                .setParameter('userId', user_id)
             .where('post.id = :post_id', { post_id })
             .groupBy('post.id')
             .addGroupBy('user.id')
             .getRawOne<IPostData>();
 
-        const post = await query;
-        if (!post) throw new BadRequestException('Post not found.');
+        if (!post) throw new BadRequestException('Post not found.')
 
-        return post;
+        await this.cacheManager.set(cacheKey, post, this.postsCacheTTL)
+
+        return {...post, likedByMe};
     }
 
     public async removePostForce(post_id: number) {
