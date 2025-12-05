@@ -17,7 +17,7 @@ export class UsersService {
         @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     ) { }
 
-    private readonly hisoryLimit = 5
+    private readonly historyLimit = 5
 
     public async search(username: string, cursor?: number) {
         const limit = 10
