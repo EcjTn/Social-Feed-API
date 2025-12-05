@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from './entity/user.entity';
 import { Repository } from 'typeorm';
@@ -7,11 +7,14 @@ import { IProfileData, IProfileDataPublic, IUserSearchData } from './interfaces/
 import { Profile } from 'passport';
 import { UserRole } from 'src/common/enums/user-role.enum';
 import { IHistoryCommentData, IHistoryCommentResponse, IHistoryLikedPostsData, IHistoryLikedPostsResponse } from './interfaces/history-data.interface';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import type { Cache } from 'cache-manager';
 
 @Injectable()
 export class UsersService {
     constructor(
-        @InjectRepository(Users) readonly usersRepo: Repository<Users>
+        @InjectRepository(Users) readonly usersRepo: Repository<Users>,
+        @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     ) { }
 
     private readonly hisoryLimit = 5
@@ -48,7 +51,7 @@ export class UsersService {
         return this.usersRepo.findOne({ where: { id, is_banned: false } })
     }
 
-    //Used for auths -- check bans
+    //Used for auths -- check bans, staffs, etc
     public findByUser(username: string, options?: { checkBanned: boolean }) {
         const where: any = { username }
         if (options?.checkBanned) { where.is_banned = false }
@@ -62,7 +65,18 @@ export class UsersService {
     }
 
     //only used for public purposes.
-    public async getPublicProfile(username: string, currentUserId?: number): Promise<IProfileDataPublic[]> {
+    public async getPublicProfile(username: string, currentUserId?: number): Promise<IProfileDataPublic> {
+        const userCacheKey = `user:${username}:profile`
+
+        const followedByMe = await this.usersRepo.createQueryBuilder('user')
+            .innerJoin('follows', 'follow', 'follow.following_id = user.id')
+            .where('follow.follower_id = :currentUserId', { currentUserId: currentUserId || 0 })
+            .andWhere('user.username = :username', { username })
+            .getCount() > 0; 
+
+        const cachedProfile = await this.cacheManager.get<IProfileData>(userCacheKey)
+        if (cachedProfile) return { ...cachedProfile, followedByMe };
+        
 
         const query = this.usersRepo.createQueryBuilder('user')
             .leftJoin('posts', 'post', 'post.user_id = user.id')
@@ -79,17 +93,15 @@ export class UsersService {
             .addSelect('COUNT(DISTINCT post.id)', 'postCount')
             .addSelect('COUNT(DISTINCT followers.id)', 'followerCount')
             .addSelect('COUNT(DISTINCT followings.id)', 'followingCount')
-            .addSelect(`
-                EXISTS(
-                    SELECT 1 FROM follows as f
-                    WHERE f.follower_id = :currentUserId
-                    AND f.following_id = user.id) AS "followedByMe"`)
-                    .setParameter('currentUserId', currentUserId || 0)
             .where('user.username = :username', { username })
             .groupBy('user.id')
 
-        const userInfo = await query.getRawMany<IProfileDataPublic>()
-        return userInfo
+        const userInfo = await query.getRawOne<IProfileDataPublic>()
+        if(!userInfo) throw new NotFoundException('User not found.')
+
+        this.cacheManager.set(userCacheKey, userInfo, 60_000)
+        
+        return { ...userInfo, followedByMe };
     }
 
     //for /users/me

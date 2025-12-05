@@ -23,3 +23,4 @@
 - Role-Based Access Control(RBAC)
 - Ban/Unban users
 - View History(Liked Posts & Own Comments)
+- Redis Caching
