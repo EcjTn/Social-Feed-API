@@ -105,8 +105,8 @@ export class UsersService {
     }
 
     //for /users/me
-    public async getOwnProfile(id: number): Promise<IProfileData[]> {
-        const query = this.usersRepo.createQueryBuilder('user')
+    public async getOwnProfile(id: number): Promise<IProfileData> {
+        const user = await this.usersRepo.createQueryBuilder('user')
             .leftJoin('posts', 'post', 'post.user_id = user.id')
             .leftJoin('follows', 'followers', 'followers.following_id = user.id')
             .leftJoin('follows', 'followings', 'followings.follower_id = user.id')
@@ -123,9 +123,10 @@ export class UsersService {
             .addSelect('COUNT(DISTINCT followings.id)', 'followingCount')
             .where('user.id = :id', { id })
             .groupBy('user.id')
+            .getRawOne<IProfileData>()
+        if(!user) throw new NotFoundException('User not found.')
 
-        const userInfo = await query.getRawMany<IProfileData>()
-        return userInfo
+        return user;
     }
 
     public async getLikedPosts(user_id: number, cursor?: number): Promise<IHistoryLikedPostsResponse> {
