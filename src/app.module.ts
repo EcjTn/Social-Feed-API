@@ -12,9 +12,12 @@ import { APP_GUARD } from '@nestjs/core';
 import { CommentsModule } from './comments/comments.module';
 import { FollowModule } from './follow/follow.module';
 import { StaffModule } from './staff/staff.module';
+import { CacheModule } from '@nestjs/cache-manager'
+import { redisCacheModuleOptions } from './configs/redis.config';
 
 @Module({
   imports: [
+    CacheModule.registerAsync(redisCacheModuleOptions),
     ThrottlerModule.forRoot(throttlerOptionsSync),
     ConfigModule.forRoot({isGlobal: true}),
     TypeOrmModule.forRootAsync(typeOrmAsyncOption),
