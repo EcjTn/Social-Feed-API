@@ -144,7 +144,7 @@ export class UsersService {
                 'like.created_at AS liked_at'
             ])
             .where('user.id = :user_id', { user_id })
-            .limit(this.hisoryLimit)
+            .limit(this.historyLimit)
             .orderBy('like.created_at', 'DESC')
 
         if (cursor) { query.andWhere('like.id < :cursor', { cursor }) }
@@ -171,7 +171,7 @@ export class UsersService {
                 'comment.created_at AS commented_at'
             ])
             .where('user.id = :user_id', { user_id })
-            .limit(this.hisoryLimit)
+            .limit(this.historyLimit)
             .orderBy('comment.created_at', 'DESC')
 
         if (cursor) { query.andWhere('comment.id < :cursor', { cursor }) }
