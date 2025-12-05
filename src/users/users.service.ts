@@ -145,7 +145,7 @@ export class UsersService {
             ])
             .where('user.id = :user_id', { user_id })
             .limit(this.historyLimit)
-            .orderBy('like.created_at', 'DESC')
+            .orderBy('like.id', 'DESC')
 
         if (cursor) { query.andWhere('like.id < :cursor', { cursor }) }
 
