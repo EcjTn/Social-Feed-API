@@ -24,3 +24,12 @@
 - Ban/Unban users
 - View History(Liked Posts & Own Comments)
 - Redis Caching
+
+
+---
+
+> [!NOTE]
+> This project is a Learning Project. Some features may be overkill or included only for practice (e.g., Redis, extra security layers, or more complex patterns).  
+> Certain parts are implemented to demonstrate real-world scenarios.
+
+---
