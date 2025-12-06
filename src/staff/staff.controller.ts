@@ -19,7 +19,7 @@ export class StaffController {
     private readonly staffService: StaffService,
     private readonly usersService: UsersService,
     private readonly commentsService: CommentsService,
-  private readonly postsService: PostsService,
+    private readonly postsService: PostsService,
   ) {}
 
   @Get('/users/:id')
@@ -43,7 +43,7 @@ export class StaffController {
   @Patch('/users/:id/ban')
   @Roles(UserRole.Admin, UserRole.Moderator)
   public async banUser(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.banUserById(id)
+    return this.staffService.banUser(id)
   }
 
   @Patch('/users/:id/unban')

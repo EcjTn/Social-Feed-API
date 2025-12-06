@@ -25,7 +25,7 @@ export class AuthController {
   @Delete('/logout')
   @UseGuards(JwtAuthGuard)
   public async logoutUser(@User() user: IJwtPayload) {
-    return await this.authService.logoutUser(user.sub)
+    return await this.authService.removeTokensByUserId(user.sub)
   }
 
   @Post('/refresh')
