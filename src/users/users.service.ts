@@ -192,6 +192,8 @@ export class UsersService {
         userRecord.bio = bio
         await this.usersRepo.save(userRecord)
 
+        await this.cacheManager.del(`user:${userRecord.username}:profile`);
+
         return { message: 'Bio updated!' }
     }
 
