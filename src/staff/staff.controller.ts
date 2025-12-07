@@ -28,13 +28,13 @@ export class StaffController {
     return this.staffService.getUserData(id, user.sub)
   }
 
-  @Get('/users/:id/history/liked-posts')
+  @Get('/users/:id/liked-posts')
   @Roles(UserRole.Admin, UserRole.Moderator)
   public async getUsersLikedPosts(@Param('id', ParseIntPipe) id: number, @Query('cursor') cursor?: string) {
     return this.usersService.getLikedPosts(id, parseCursor(cursor))
   }
 
-  @Get('/users/:id/history/comments')
+  @Get('/users/:id/comments')
   @Roles(UserRole.Admin, UserRole.Moderator)
   public async getUsersLikedComments(@Param('id', ParseIntPipe) id: number, @Query('cursor') cursor?: string) {
     return this.usersService.getUserComments(id, parseCursor(cursor))

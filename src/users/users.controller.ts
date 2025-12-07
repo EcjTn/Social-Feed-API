@@ -25,12 +25,12 @@ export class UsersController {
         return await this.usersService.getOwnProfile(user.sub)
     }
 
-    @Get('/me/history/liked-posts')
+    @Get('/me/liked-posts')
     public async getLikedPosts(@User() user: IJwtPayload, @Query('cursor') cursor?: string){
         return await this.usersService.getLikedPosts(user.sub, parseCursor(cursor))
     }
 
-    @Get('/me/history/comments')
+    @Get('/me/comments')
     public async getUserComments(@User() user: IJwtPayload, @Query('cursor') cursor?: string){
         return await this.usersService.getUserComments(user.sub, parseCursor(cursor))
     }
