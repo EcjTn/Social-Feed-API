@@ -36,12 +36,12 @@ export class UsersController {
         return await this.usersService.getUserComments(user.sub, parseCursor(cursor))
     }
 
-    @Patch('/me/change-password')
+    @Patch('/me/password')
     public async changeUserPassword(@User() user: IJwtPayload, @Body()data: ChangePasswordDto){
         return await this.usersService.changePassword(user.sub, data.newPassword)
     }
 
-    @Patch('/me/username')
+    @Patch('/me/profile')  
     public async changeUsername(@User() user: IJwtPayload, @Body() data: ChangeUsernameDto){
         return await this.usersService.changeUsername(user.sub, data.newUsername)
     }
