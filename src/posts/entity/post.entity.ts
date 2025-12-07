@@ -21,6 +21,9 @@ export class Posts {
     @Column()
     content: string
 
+    @Column({default: false})
+    private: boolean
+
     @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP'})
     created_at: Date
 

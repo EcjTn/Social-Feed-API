@@ -56,7 +56,7 @@ export class PostsService {
         return { message: 'Successfully edited post.' };
     }
 
-    public async getPosts(user_id: number, filter?: IUserFilter, cursor?: number): Promise<IPostDataResponse> {
+    public async getPosts(user_id: number, filter?: IUserFilter,cursor?: number, showPrivate?: boolean): Promise<IPostDataResponse> {
     const loadLimit = 5
     const query = this.postsRepo.createQueryBuilder('post')
         .leftJoin('post.comments', 'comments')
@@ -80,6 +80,9 @@ export class PostsService {
         .addGroupBy('user.id')
         .orderBy('post.id', 'DESC')
         .limit(loadLimit)
+
+    if(showPrivate) {query.andWhere('post.private = :isPrivate', { isPrivate: true })}
+    else {query.andWhere('post.private = :isPrivate', { isPrivate: false })}
 
     if (filter?.username) { query.andWhere('user.username = :username', { username: filter.username }) }
 
