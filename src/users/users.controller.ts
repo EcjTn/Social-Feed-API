@@ -3,12 +3,11 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { UsersService } from './users.service';
 import type { Request } from 'express';
 import type { IJwtPayload } from 'src/common/interfaces/jwt-payload.interface';
-import { BioDto } from './dto/bio.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { User } from 'src/common/decorators/user.decorator';
 import { parse } from 'path';
 import { parseCursor } from 'src/utils/cursor-parser.util';
-import { ChangeUsernameDto } from './dto/change-username.dto';
+import { ProfileDto } from './dto/change-profile.dto';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard)
@@ -42,14 +41,10 @@ export class UsersController {
     }
 
     @Patch('/me/profile')  
-    public async changeUsername(@User() user: IJwtPayload, @Body() data: ChangeUsernameDto){
-        return await this.usersService.changeUsername(user.sub, data.newUsername)
+    public async changeUsername(@User() user: IJwtPayload, @Body() data: ProfileDto){
+        return await this.usersService.changeProfile(user.sub, data?.newUsername, data?.newBio)
     }
 
-    @Patch('/me/bio')
-    public async updateUserBio(@User() user: IJwtPayload, @Body() newBio: BioDto){
-        return await this.usersService.changeBio(user.sub, newBio.bio)
-    }
 
     @Delete('/me/delete')
     public async deleteUser(@User() user: IJwtPayload){

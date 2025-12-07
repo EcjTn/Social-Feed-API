@@ -184,19 +184,6 @@ export class UsersService {
         return { comments, nextCursor }
     }
 
-    public async changeBio(id: number, bio: string) {
-        const userRecord = await this.usersRepo.findOne({ where: { id } })
-
-        if (!userRecord) throw new NotFoundException('User not found.')
-
-        userRecord.bio = bio
-        await this.usersRepo.save(userRecord)
-
-        await this.cacheManager.del(`user:${userRecord.username}:profile`);
-
-        return { message: 'Bio updated!' }
-    }
-
     public async changePassword(id: number, password: string) {
         const userRecord = await this.usersRepo.findOne({ where: { id }, select: ['password'] })
         if (!userRecord) throw new NotFoundException()
@@ -209,19 +196,22 @@ export class UsersService {
         return { message: 'Successfully changed password.' }
     }
 
-    public async changeUsername(id: number, newUsername: string) {
-        const existingUser = await this.findByUser(newUsername)
-        if (existingUser) throw new BadRequestException('Username already taken.')
-
-        const userRecord = await this.findById(id, true)
+    public async changeProfile(id: number, newUsername?: string, newBio?: string) {
+        const userRecord = await this.findById(id)
         if (!userRecord) throw new NotFoundException('User not found.')
-        
-        userRecord.username = newUsername
+        await this.cacheManager.del(`user:${userRecord.username}:profile`); 
+
+        if (newUsername) {
+            const existingUser = await this.findByUser(newUsername)
+            if (existingUser) throw new BadRequestException('Username in use.')
+            userRecord.username = newUsername
+        }
+
+        if(newBio !== undefined) {userRecord.bio = newBio}
+
         await this.usersRepo.save(userRecord)
 
-        await this.cacheManager.del(`user:${userRecord.username}:profile`);
-
-        return { message: 'Successfully changed username.' }
+        return { message: 'Profile successfully updated.' }
     }
 
     public async deleteUserById(id: number) {
