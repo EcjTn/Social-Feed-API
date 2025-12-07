@@ -184,7 +184,7 @@ export class UsersService {
         return { comments, nextCursor }
     }
 
-    public async updateBio(id: number, bio: string) {
+    public async changeBio(id: number, bio: string) {
         const userRecord = await this.usersRepo.findOne({ where: { id } })
 
         if (!userRecord) throw new NotFoundException('User not found.')
@@ -207,6 +207,21 @@ export class UsersService {
         await this.usersRepo.save(userRecord)
 
         return { message: 'Successfully changed password.' }
+    }
+
+    public async changeUsername(id: number, newUsername: string) {
+        const existingUser = await this.findByUser(newUsername)
+        if (existingUser) throw new BadRequestException('Username already taken.')
+
+        const userRecord = await this.findById(id, true)
+        if (!userRecord) throw new NotFoundException('User not found.')
+        
+        userRecord.username = newUsername
+        await this.usersRepo.save(userRecord)
+
+        await this.cacheManager.del(`user:${userRecord.username}:profile`);
+
+        return { message: 'Successfully changed username.' }
     }
 
     public async deleteUserById(id: number) {

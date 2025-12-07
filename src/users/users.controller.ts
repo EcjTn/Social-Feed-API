@@ -8,6 +8,7 @@ import { ChangePasswordDto } from './dto/change-password.dto';
 import { User } from 'src/common/decorators/user.decorator';
 import { parse } from 'path';
 import { parseCursor } from 'src/utils/cursor-parser.util';
+import { ChangeUsernameDto } from './dto/change-username.dto';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard)
@@ -40,9 +41,14 @@ export class UsersController {
         return await this.usersService.changePassword(user.sub, data.newPassword)
     }
 
-    @Patch('/bio')
+    @Patch('/me/username')
+    public async changeUsername(@User() user: IJwtPayload, @Body() data: ChangeUsernameDto){
+        return await this.usersService.changeUsername(user.sub, data.newUsername)
+    }
+
+    @Patch('/me/bio')
     public async updateUserBio(@User() user: IJwtPayload, @Body() newBio: BioDto){
-        return await this.usersService.updateBio(user.sub, newBio.bio)
+        return await this.usersService.changeBio(user.sub, newBio.bio)
     }
 
     @Delete('/me/delete')
