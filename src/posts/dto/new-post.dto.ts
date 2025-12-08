@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { IsNotEmpty, IsString, Length } from "class-validator"
+import { IsBoolean, IsNotEmpty, IsOptional, IsString, Length } from "class-validator"
 
 export class NewPostDto {
 
@@ -14,5 +14,10 @@ export class NewPostDto {
     @IsNotEmpty()
     @Length(1, 500)
     content: string
+
+    @ApiProperty({example: false})
+    @IsBoolean()
+    @IsOptional()
+    isPrivate?: boolean
 
 }

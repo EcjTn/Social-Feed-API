@@ -8,6 +8,7 @@ export interface IPostData {
     commentCount: number
     likeCount: number
     likedByMe?: boolean
+    private: boolean
 }
 
 export interface IPostDataResponse {

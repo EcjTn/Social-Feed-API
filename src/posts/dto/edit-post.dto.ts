@@ -12,5 +12,5 @@ export class EditPostDto {
     @ApiProperty({example: false})
     @IsBoolean()
     @IsOptional()
-    updatedVisibility?: boolean
+    isPrivate?: boolean
 }

@@ -19,18 +19,19 @@ export class PostsService {
 
     private readonly postsCacheTTL = 120_000; // 2 minutes
 
-    public async addPost(user_id: number, title: string, content: string) {
+    public async addPost(user_id: number, title: string, content: string, privatePost: boolean = false) {
         const userRecord = await this.usersService.findById(user_id, true)
         if (!userRecord) throw new BadRequestException('User not found.')
 
         const newPost = this.postsRepo.create({
             title,
             content,
-            user: userRecord
+            user: userRecord,
+            private: privatePost
         })
         await this.postsRepo.save(newPost)
 
-        return { message: 'Successful!' }
+        return { message: 'Successfully added post!' }
     }
 
     public async removePost(user_id: number, post_id: number) {
@@ -43,7 +44,7 @@ export class PostsService {
         return { message: 'Successfully deleted post!' }
     }
 
-    public async editPost(user_id: number, post_id: number, content?: string, visibility?: boolean) {
+    public async editPost(user_id: number, post_id: number, content?: string, privatePost?: boolean) {
         const post = await this.postsRepo.createQueryBuilder('post')
             .where('post.id = :post_id', { post_id })
             .andWhere('post.user_id = :user_id', { user_id })
@@ -52,14 +53,14 @@ export class PostsService {
         if (!post) throw new BadRequestException('Post not found or you do not have permission to edit it.')
         
         if(content !== undefined) { post.content = content }
-        if(visibility !== undefined) { post.private = visibility }
+        if(privatePost !== undefined) { post.private = privatePost }
 
         await this.postsRepo.save(post)
 
         return { message: 'Successfully edited post.' };
     }
 
-    public async getPosts(user_id: number, filter?: IUserFilter,cursor?: number, showPrivate?: boolean): Promise<IPostDataResponse> {
+    public async getPosts(user_id: number, filter?: IUserFilter,cursor?: number): Promise<IPostDataResponse> {
     const loadLimit = 5
     const query = this.postsRepo.createQueryBuilder('post')
         .leftJoin('post.comments', 'comments')
@@ -72,6 +73,7 @@ export class PostsService {
             'post.title AS title',
             'post.content AS content',
             'post.created_at AS created_at',
+            'post.private AS private',
         ])
         .addSelect('COUNT(DISTINCT comments.id)', 'commentCount')
         .addSelect('COUNT(DISTINCT likes.id)', 'likeCount')
@@ -84,12 +86,16 @@ export class PostsService {
         .orderBy('post.id', 'DESC')
         .limit(loadLimit)
 
-    if(showPrivate) {query.andWhere('post.private = :isPrivate', { isPrivate: true })}
-    else {query.andWhere('post.private = :isPrivate', { isPrivate: false })}
 
-    if (filter?.username) { query.andWhere('user.username = :username', { username: filter.username }) }
+    if (filter?.username) { 
+        query.andWhere('user.username = :username', { username: filter.username })
+        query.andWhere('post.private = :isPrivate', { isPrivate: false })
+    }
 
-    if (filter?.userId) { query.andWhere('user.id = :userId', { userId: filter.userId }) }
+    if (filter?.userId) { 
+        query.andWhere('post.user_id = :userId', { userId: filter.userId })
+    }
+
 
     if (cursor) {
         query.andWhere('post.id < :cursor', { cursor })
@@ -101,7 +107,7 @@ export class PostsService {
     return { posts, nextCursor }
     }
 
-    public async getPostById(post_id: number, user_id: number): Promise<IPostData> {
+    public async getPostById(post_id: number, user_id: number, showPrivate?: boolean): Promise<IPostData> {
         const cacheKey = `post:${post_id}:metadata`;
         const likedByMe = await this.postsRepo.createQueryBuilder('post')
             .innerJoin('post.likes', 'likes')
@@ -112,7 +118,7 @@ export class PostsService {
         const cachedPost = await this.cacheManager.get<IPostData>(cacheKey);
         if(cachedPost) return {...cachedPost, likedByMe}
 
-        const post = await this.postsRepo.createQueryBuilder('post')
+        const query = this.postsRepo.createQueryBuilder('post')
             .leftJoin('post.comments', 'comments')
             .innerJoin('post.user', 'user')
             .leftJoin('post.likes', 'likes')            
@@ -129,7 +135,11 @@ export class PostsService {
             .where('post.id = :post_id', { post_id })
             .groupBy('post.id')
             .addGroupBy('user.id')
-            .getRawOne<IPostData>();
+            
+        if(showPrivate) {query.andWhere('post.private = :isPrivate', { isPrivate: true })}
+        else {query.andWhere('post.private = :isPrivate', { isPrivate: false })}
+
+        const post = await query.getRawOne<IPostData>();
 
         if (!post) throw new BadRequestException('Post not found.')
 

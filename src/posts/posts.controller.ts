@@ -14,7 +14,7 @@ export class PostsController {
 
   @Post()
   public async create(@User() user: IJwtPayload, @Body() post: NewPostDto) {
-    return await this.postService.addPost(user.sub, post.title, post.content)
+    return await this.postService.addPost(user.sub, post.title, post.content, post.isPrivate)
   }
 
 
@@ -38,7 +38,7 @@ export class PostsController {
     @Param('id', ParseIntPipe) post_id: number,
     @User() user: IJwtPayload,
     @Body() data: EditPostDto) {
-    return await this.postService.editPost(user.sub, post_id, data?.updatedContent, data?.updatedVisibility)
+    return await this.postService.editPost(user.sub, post_id, data?.updatedContent, data?.isPrivate)
   }
 
 }
