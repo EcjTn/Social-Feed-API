@@ -43,15 +43,18 @@ export class PostsService {
         return { message: 'Successfully deleted post!' }
     }
 
-    public async editPost(user_id: number, post_id: number, content: string) {
-        const result = await this.postsRepo.update(
-            { user: { id: user_id }, id: post_id },
-            { content },
-        );
+    public async editPost(user_id: number, post_id: number, content?: string, visibility?: boolean) {
+        const post = await this.postsRepo.createQueryBuilder('post')
+            .where('post.id = :post_id', { post_id })
+            .andWhere('post.user_id = :user_id', { user_id })
+            .getOne()
 
-        if (!result.affected) {
-            throw new BadRequestException('Post not found or not editable');
-        }
+        if (!post) throw new BadRequestException('Post not found or you do not have permission to edit it.')
+        
+        if(content !== undefined) { post.content = content }
+        if(visibility !== undefined) { post.private = visibility }
+
+        await this.postsRepo.save(post)
 
         return { message: 'Successfully edited post.' };
     }

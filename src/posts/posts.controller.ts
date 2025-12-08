@@ -38,7 +38,7 @@ export class PostsController {
     @Param('id', ParseIntPipe) post_id: number,
     @User() user: IJwtPayload,
     @Body() data: EditPostDto) {
-    return await this.postService.editPost(user.sub, post_id, data.updatedContent)
+    return await this.postService.editPost(user.sub, post_id, data?.updatedContent, data?.updatedVisibility)
   }
 
 }
