@@ -40,6 +40,12 @@ export class StaffController {
     return this.usersService.getUserComments(id, parseCursor(cursor))
   }
 
+  @Get('/users/:id/posts')
+  @Roles(UserRole.Admin, UserRole.Moderator)
+  public async getUsersPosts(@User() user: IJwtPayload, @Param('id', ParseIntPipe) id: number, @Query('cursor') cursor?: string) {
+    return this.postsService.getPosts(user.sub, { userId: id }, parseCursor(cursor))
+  }
+
   @Patch('/users/:id/ban')
   @Roles(UserRole.Admin, UserRole.Moderator)
   public async banUser(@Param('id', ParseIntPipe) id: number) {
