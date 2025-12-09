@@ -17,5 +17,5 @@ export interface IPostDataResponse {
 }
 
 export interface ICachedPostId {
-    id: number
+    post_id: number
 }

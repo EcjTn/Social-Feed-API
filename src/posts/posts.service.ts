@@ -73,8 +73,7 @@ export class PostsService {
                 .innerJoin('post.likes', 'likes')
                 .select('post.id')
                 .whereInIds(cachedPostIds)
-                .getRawMany<{ post_id: number }>()
-            
+                .getRawMany<ICachedPostId>()            
 
             const likedPostIds = new Set(likes.map(like => like.post_id))
             const postWithLike = cachedPosts.map(post => ({...post,likedByMe: likedPostIds.has(post.id)}))
@@ -125,12 +124,12 @@ export class PostsService {
         const postIds = posts.map(post => post.id)
         const likes = await this.postsRepo.createQueryBuilder('post')
             .innerJoin('post.likes', 'likes')
-            .select(['post.id AS postId'])
+            .select('post.id')
             .whereInIds(postIds)
             .andWhere('likes.user_id = :userId', { userId: user_id })
             .getRawMany<ICachedPostId>()
-        
-        const likedPostIds = new Set(likes.map(like => like.id)) //purpose of set is to remove duplicates AND lookup faster
+                
+        const likedPostIds = new Set(likes.map(like => like.post_id)) //purpose of set is to remove duplicates AND lookup faster
 
         const postWithLike = posts.map(post => ({ ...post, likedByMe: likedPostIds.has(post.id) }))
 
