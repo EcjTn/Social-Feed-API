@@ -12,7 +12,7 @@ Modular NestJS backend for a social feed system with organized architecture and 
 
 ---
 
-## 🚀 Tech Stack & Architecture (Short Descriptions)
+## 🚀 Tech Stack & Architecture
 
 - **TypeORM** — ORM for Entities, Relations, and Migrations.  
 - **Postgres** — Relational database for structured, linked data.  
@@ -25,7 +25,7 @@ Modular NestJS backend for a social feed system with organized architecture and 
 
 ---
 
-## 📦 Current Features (One-Sentence Descriptions)
+## 📦 Features
 
 - **Authentication** — Secure login and signup workflow using JWT tokens.  
 - **Access & Refresh Tokens** — Short-lived access tokens and long-lived refresh tokens for session continuity.  
