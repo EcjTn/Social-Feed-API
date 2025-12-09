@@ -5,7 +5,7 @@ import { Posts } from './entity/post.entity';
 import { UsersService } from 'src/users/users.service';
 import { verifyRecaptcha } from 'src/auth/utils/recaptcha.util';
 import { IUserFilter } from '../common/interfaces/user-filter.interface';
-import { IPostData, IPostDataResponse } from './interfaces/post-data.interface';
+import { ICachedPostId, IPostData, IPostDataResponse } from './interfaces/post-data.interface';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import type { Cache } from 'cache-manager';
 
@@ -126,11 +126,11 @@ export class PostsService {
         const likes = await this.postsRepo.createQueryBuilder('post')
             .innerJoin('post.likes', 'likes')
             .select(['post.id AS postId'])
-            .where('post.id IN (:...postIds)', { postIds })
+            .whereInIds(postIds)
             .andWhere('likes.user_id = :userId', { userId: user_id })
-            .getRawMany<{ postid: number }>()
+            .getRawMany<ICachedPostId>()
         
-        const likedPostIds = new Set(likes.map(like => like.postid)) //purpose of set is to remove duplicates AND lookup faster
+        const likedPostIds = new Set(likes.map(like => like.id)) //purpose of set is to remove duplicates AND lookup faster
 
         const postWithLike = posts.map(post => ({ ...post, likedByMe: likedPostIds.has(post.id) }))
 

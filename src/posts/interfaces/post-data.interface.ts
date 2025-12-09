@@ -15,3 +15,7 @@ export interface IPostDataResponse {
     posts: IPostData[]
     nextCursor: number | null
 }
+
+export interface ICachedPostId {
+    id: number
+}
