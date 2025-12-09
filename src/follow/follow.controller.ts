@@ -25,7 +25,7 @@ export class FollowController {
     return await this.followService.getFollowers({username}, parseCursor(cursor))
   }
 
-  @Get('/:username/followings')
+  @Get('/:username/following')
   public async getUsersFollowing(@Param('username')username: string, @Query('cursor')cursor?: string) {
     return await this.followService.getFollowing({username}, parseCursor(cursor))
   }
