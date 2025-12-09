@@ -81,24 +81,20 @@ export class PostsService {
             ])
             .addSelect('COUNT(DISTINCT comments.id)', 'commentCount')
             .addSelect('COUNT(DISTINCT likes.id)', 'likeCount')
-            .addSelect(`EXISTS(
-                SELECT 1 FROM post_likes AS likes 
-                WHERE post.id = likes.post_id AND likes.user_id = :userId) AS "likedByMe"`)
             .setParameter('userId', user_id)
             .groupBy('post.id')
             .addGroupBy('user.id')
             .orderBy('post.id', 'DESC')
             .limit(loadLimit)
 
+        if(!filter?.username && !filter?.userId) query.andWhere('post.private = :isPrivate', { isPrivate: false }) 
 
         if (filter?.username) {
             query.andWhere('user.username = :username', { username: filter.username })
             query.andWhere('post.private = :isPrivate', { isPrivate: false })
         }
 
-        if (filter?.userId) {
-            query.andWhere('post.user_id = :userId', { userId: filter.userId })
-        }
+        if (filter?.userId) query.andWhere('post.user_id = :userId', { userId: filter.userId })
 
 
         if (cursor) {
