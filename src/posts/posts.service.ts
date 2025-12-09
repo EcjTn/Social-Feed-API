@@ -76,7 +76,7 @@ export class PostsService {
                 .getRawMany<ICachedPostId>()            
 
             const likedPostIds = new Set(likes.map(like => like.post_id))
-            const postWithLike = cachedPosts.map(post => ({...post,likedByMe: likedPostIds.has(post.id)}))
+            const postWithLike = cachedPosts.map(post => ({...post, likedByMe: likedPostIds.has(post.id)}))
                 
             return { posts: postWithLike, nextCursor: cachedCursor }
         }
