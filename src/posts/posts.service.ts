@@ -97,14 +97,26 @@ export class PostsService {
         if (filter?.userId) query.andWhere('post.user_id = :userId', { userId: filter.userId })
 
 
-        if (cursor) {
-            query.andWhere('post.id < :cursor', { cursor })
-        }
+        if (cursor) query.andWhere('post.id < :cursor', { cursor })
 
         const posts = await query.getRawMany<IPostData>()
         const nextCursor = posts.length ? posts[posts.length - 1].id : null
 
-        return { posts, nextCursor }
+        await this.cacheManager.set(cachKey, posts, this.postsCacheTTL )
+
+        const postIds = posts.map(post => post.id)
+        const likes = await this.postsRepo.createQueryBuilder('post')
+            .innerJoin('post.likes', 'likes')
+            .select(['post.id AS postId'])
+            .where('post.id IN (:...postIds)', { postIds })
+            .andWhere('likes.user_id = :userId', { userId: user_id })
+            .getRawMany<{ postid: number }>()
+        
+        const likedPostIds = new Set(likes.map(like => like.postid)) //purpose of set is to remove duplicates AND lookup faster
+
+        const postWithLike = posts.map(post => ({ ...post, likedByMe: likedPostIds.has(post.id) }))
+
+        return { posts: postWithLike, nextCursor }
     }
 
     public async getPostById(post_id: number, user_id: number, showPrivate?: boolean): Promise<IPostData> {
