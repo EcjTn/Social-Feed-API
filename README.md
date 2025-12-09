@@ -55,3 +55,16 @@ Modular NestJS backend for a social feed system with organized architecture and 
 - **Redis Caching** — Speeds up frequently accessed pages like user profiles or feeds.
 
 ---
+
+## 🚀 Getting Started
+- Clone the repository:  
+  ```bash
+  git clone https://github.com/EcjTn/text-feed-api.git
+  cd text-feed-api
+  ```
+
+- Setup environment variables(env.example provided)
+- Run docker compose:
+  ```bash
+  docker compose up -d --build
+  ```
