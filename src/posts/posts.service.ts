@@ -60,9 +60,27 @@ export class PostsService {
         return { message: 'Successfully edited post.' };
     }
 
-    public async getPosts(user_id: number, filter?: IUserFilter, cursor?: number): Promise<IPostDataResponse> {
-        const cachKey = filter ? `posts:filter:${JSON.stringify(filter)}:cursor:${cursor || 0}`
+    public async getPosts(user_id: number, filter?: IUserFilter, cursor?: number) {
+        const cachKey = filter ? `posts:filter:${JSON.stringify(filter.userId || filter.username)}:cursor:${cursor || 0}`
             : `posts:cursor:${cursor || 0}`;
+
+        const cachedPosts = await this.cacheManager.get<IPostData[]>(cachKey)
+        if(cachedPosts) {
+            //console.log("USING CACHE")
+            const cachedCursor = cachedPosts.length ? cachedPosts[cachedPosts.length - 1].id : null
+            const cachedPostIds = cachedPosts.map(post => post.id)
+            const likes = await this.postsRepo.createQueryBuilder('post')
+                .innerJoin('post.likes', 'likes')
+                .select('post.id')
+                .whereInIds(cachedPostIds)
+                .getRawMany<{ post_id: number }>()
+            
+
+            const likedPostIds = new Set(likes.map(like => like.post_id))
+            const postWithLike = cachedPosts.map(post => ({...post,likedByMe: likedPostIds.has(post.id)}))
+                
+            return { posts: postWithLike, nextCursor: cachedCursor }
+        }
 
         const loadLimit = 5
 
