@@ -2,7 +2,7 @@
 Modular NestJS backend for a social feed system with organized architecture and security features.
 
 <p align="left">
-  <img src="https://img.shields.io/badge/NestJS-v10-red" />
+  <img src="https://img.shields.io/badge/NestJS-v11-red" />
   <img src="https://img.shields.io/badge/PostgreSQL-Database-blue" />
   <img src="https://img.shields.io/badge/TypeORM-ORM-orange" />
   <img src="https://img.shields.io/badge/Redis-Caching-critical" />
