@@ -12,6 +12,12 @@ Modular NestJS backend for a social feed system with organized architecture and 
 
 ---
 
+> [!NOTE]    
+> This project is a Learning Project. Some features may be overkill or included only for practice (e.g., Redis, extra security layers, or more complex patterns).
+> 
+
+---
+
 ## 🚀 Tech Stack & Architecture
 
 - **TypeORM** — ORM for Entities, Relations, and Migrations.  
@@ -49,6 +55,3 @@ Modular NestJS backend for a social feed system with organized architecture and 
 - **Redis Caching** — Speeds up frequently accessed pages like user profiles or feeds.
 
 ---
-
-> [!NOTE]    
-> This project is a Learning Project. Some features may be overkill or included only for practice (e.g., Redis, extra security layers, or more complex patterns).
