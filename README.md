@@ -1,4 +1,4 @@
-# 📄 Text Feed API  
+# 📱 Text Feed API  
 Modular NestJS backend for a social feed system with organized architecture and security features.
 
 <p align="left">
