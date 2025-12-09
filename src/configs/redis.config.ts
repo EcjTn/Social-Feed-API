@@ -6,6 +6,6 @@ export const redisCacheModuleOptions: CacheModuleAsyncOptions = {
     isGlobal: true,
     inject: [ConfigService],
     useFactory: async(cfg: ConfigService) => ({
-        stores: [new KeyvRedis(cfg.getOrThrow('REDIS_URL'))],
+        stores: [new KeyvRedis(cfg.getOrThrow('REDIS_URL_DOCKER'))],
     })
 }

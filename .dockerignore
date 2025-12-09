@@ -7,3 +7,4 @@ node_modules/
 eslint.config.mjs
 LICENSE
 README.md
+.vscode/
