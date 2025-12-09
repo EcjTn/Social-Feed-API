@@ -50,5 +50,5 @@ Modular NestJS backend for a social feed system with organized architecture and 
 
 ---
 
-## 📝 Note
-> This is a learning-focused project where some features are intentionally over-engineered to explore real backend concepts like caching, security layers, and modular designs.
+> [!NOTE]    
+> This project is a Learning Project. Some features may be overkill or included only for practice (e.g., Redis, extra security layers, or more complex patterns).
