@@ -27,9 +27,9 @@ Modular NestJS backend for a social feed system with organized architecture and 
 
 ## 📦 Features
 
-- **Authentication** — Secure login and signup workflow using JWT tokens.  
+- **Authentication** — Secure login and signup workflow using JWT tokens and opaque tokens.  
 - **Access & Refresh Tokens** — Short-lived access tokens and long-lived refresh tokens for session continuity.  
-- **Partial User Search** — Search users efficiently using indexed queries.  
+- **Partial User Search** — Search for users by matching parts of their username.  
 - **Public User Data** — Exposes non-sensitive profile information.  
 - **Posts** — Create, view, and manage user-generated posts.  
 - **Comments** — Commenting system with parent–child relations.  
@@ -46,7 +46,7 @@ Modular NestJS backend for a social feed system with organized architecture and 
 - **Role-Based Access Control (RBAC)** — Restricts actions based on user roles.  
 - **Ban/Unban Users** — Administrative controls for platform moderation.  
 - **View History** — View previously liked posts and past comments.  
-- **Redis Caching** — Speeds up frequently accessed pages and DB-heavy queries.
+- **Redis Caching** — Speeds up frequently accessed pages like user profiles or feeds.
 
 ---
 
