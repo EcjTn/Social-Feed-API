@@ -61,8 +61,11 @@ export class PostsService {
     }
 
     public async getPosts(user_id: number, filter?: IUserFilter, cursor?: number): Promise<IPostDataResponse> {
+        const cachKey = filter ? `posts:filter:${JSON.stringify(filter)}:cursor:${cursor || 0}`
+            : `posts:cursor:${cursor || 0}`;
 
         const loadLimit = 5
+
         const query = this.postsRepo.createQueryBuilder('post')
             .leftJoin('post.comments', 'comments')
             .innerJoin('post.user', 'user')
