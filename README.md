@@ -50,7 +50,8 @@ Modular NestJS backend for a social feed system with organized architecture and 
 - **Cursor-Based Pagination** — Efficient, scalable feed pagination.  
 - **Role-Based Access Control (RBAC)** — Restricts actions based on user roles.  
 - **Ban/Unban Users** — Administrative controls for platform moderation.  
-- **View History** — View previously liked posts and past comments.  
+- **View History** — View previously liked posts and past comments.
+- **Post Visibility** — Allow public and private posts
 - **Redis Caching** — Speeds up frequently accessed pages like user profiles or feeds.
 
 ---
