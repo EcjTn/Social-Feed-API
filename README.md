@@ -46,7 +46,6 @@ Modular NestJS backend for a social feed system with organized architecture and 
 - **Helmet Protection** — Adds secure HTTP headers for baseline protection.  
 - **GZip Compression** — Reduces response size for faster delivery.  
 - **Swagger Docs** — Auto-generated API documentation.  
-- **Dockerized** — Fully runnable through Docker for consistent environments.  
 - **Recaptcha (v3)** — Server-side validation to block automated signups/logins.  
 - **Cursor-Based Pagination** — Efficient, scalable feed pagination.  
 - **Role-Based Access Control (RBAC)** — Restricts actions based on user roles.  
