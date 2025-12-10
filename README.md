@@ -2,12 +2,12 @@
 Modular NestJS backend for a social feed system with organized architecture and security features.
 
 <p align="left">
-  <img src="https://img.shields.io/badge/NestJS-v11-red?logo=nestjs&logoColor=white" />
-  <img src="https://img.shields.io/badge/PostgreSQL-Database-blue?logo=postgresql&logoColor=white" />
-  <img src="https://img.shields.io/badge/TypeORM-ORM-orange?logo=typeorm&logoColor=white" />
-  <img src="https://img.shields.io/badge/Redis-Caching-critical?logo=redis&logoColor=white" />
-  <img src="https://img.shields.io/badge/Docker-Ready-informational?logo=docker&logoColor=white" />
-  <img src="https://img.shields.io/badge/Swagger-API Docs-success?logo=swagger&logoColor=white" />
+  <img src="https://img.shields.io/badge/NestJS-v11-red?logo=nestjs&logoColor=e0234e&style=for-the-badge" />
+  <img src="https://img.shields.io/badge/PostgreSQL-Database-blue?logo=postgresql&logoColor=336791&style=for-the-badge" />
+  <img src="https://img.shields.io/badge/TypeORM-ORM-orange?logo=typeorm&logoColor=336791&style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Redis-Caching-red?logo=redis&logoColor=DC382D&style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Docker-Ready-blue?logo=docker&logoColor=2496ED&style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Swagger-API Docs-green?logo=swagger&logoColor=85EA2D&style=for-the-badge" />
 </p>
 
 ---
