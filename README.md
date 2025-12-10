@@ -21,7 +21,7 @@ Modular NestJS backend for a social feed system with organized architecture and 
 ## 🚀 Tech Stack & Architecture
 
 - **TypeORM** — ORM for Entities, Relations, and Migrations.  
-- **Postgres** — Relational database for structured, linked data.  
+- **PostgreSQL** — Relational database for structured, linked data.  
 - **Redis (Caching)** — In-memory layer to speed up repeated queries.  
 - **Indexing & Unique Indexes** — Improves read performance and prevents duplicates.  
 - **Rate Limiting (Throttler)** — Prevents excessive requests and abuse.  
