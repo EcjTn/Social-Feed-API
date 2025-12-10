@@ -27,6 +27,6 @@ services:
             - redis-db
         ports:
             - 3000:3000
-        command: ["npm", "run", "start:prod"]
+        command: ["npm", "run", "start:dev"]
 volumes:
     pgdata:
