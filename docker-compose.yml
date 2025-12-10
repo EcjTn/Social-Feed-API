@@ -6,11 +6,9 @@ services:
             - .env
         volumes:
             - pgdata:/var/lib/postgresql/
-
     redis-db:
         image: redis
         restart: always
-
     pgadmin:
         image: dpage/pgadmin4
         restart: always
@@ -19,7 +17,6 @@ services:
             - PGADMIN_DEFAULT_PASSWORD=password
         ports:
             - 5050:80
-
     app:
         build: .
         restart: always
@@ -30,7 +27,6 @@ services:
             - redis-db
         ports:
             - 3000:3000
-        command: ["npm", "run", "start:dev"]
-
+        command: ["npm", "run", "start:prod"]
 volumes:
     pgdata:
