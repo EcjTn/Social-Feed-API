@@ -40,7 +40,7 @@ Modular NestJS backend for a social feed system with organized architecture and 
 - **Posts** — Create, view, and manage user-generated posts.  
 - **Comments** — Commenting system with parent–child relations.  
 - **Follow System** — Basic social graph to follow/unfollow users.  
-- **Likes (Posts/Comments)** — Unique like actions enforced with unique indexes.  
+- **Like System (Posts/Comments)** — Unique like actions enforced with unique indexes.  
 - **Identicon Avatars/PFPs** — Auto-generated profile images for new users.  
 - **Rate Limiting** — App-wide throttling to prevent request flooding.  
 - **Helmet Protection** — Adds secure HTTP headers for baseline protection.  
