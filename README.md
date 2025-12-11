@@ -38,7 +38,7 @@ Modular NestJS backend for a social feed system with organized architecture and 
 - **Partial User Search** — Search for users by matching parts of their username.  
 - **Public User Data** — Exposes non-sensitive profile information.  
 - **Posts** — Create, view, and manage user-generated posts.  
-- **Comments** — Commenting system with parent–child relations.  
+- **Comments** — Commenting system with parent–child relations(self referencing).  
 - **Follow System** — Basic social graph to follow/unfollow users.  
 - **Like System (Posts/Comments)** — Unique like actions enforced with unique indexes.  
 - **Identicon Avatars/PFPs** — Auto-generated profile images for new users.  
