@@ -3,7 +3,6 @@ import { AppModule } from './app.module';
 import helmet from 'helmet'
 import { ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser'
-import cors from 'cors'
 import { SwaggerModule } from '@nestjs/swagger';
 import { swaggerConfig } from './configs/swagger.config';
 import compression from 'compression';
@@ -11,8 +10,8 @@ import compression from 'compression';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.enableCors()
   app.use(compression())
-  app.use(cors())
   app.use(cookieParser())
   app.use(helmet())
   app.useGlobalPipes(new ValidationPipe({
