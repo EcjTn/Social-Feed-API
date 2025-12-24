@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
 import { Users } from 'src/users/entity/user.entity';
 
 @Entity('refresh_tokens')
@@ -12,6 +12,7 @@ export class RefreshToken {
 
     @ManyToOne(() => Users, { onDelete: 'CASCADE' })
     @JoinColumn({name: 'user_id'})
+    @Index()
     user: Users
 
     @Column({type: 'timestamptz'})

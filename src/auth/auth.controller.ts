@@ -6,6 +6,7 @@ import { RegisterUserDto } from './dtos/register.dto';
 import { User } from 'src/common/decorators/user.decorator';
 import type { IJwtPayload } from 'src/common/interfaces/jwt-payload.interface';
 import { JwtAuthGuard } from './guards/jwt.guard';
+import { COOKIE_KEYS } from './constants/cookie.constant';
 
 @Controller('auth')
 export class AuthController {
@@ -24,8 +25,8 @@ export class AuthController {
 
   @Delete('/logout')
   @UseGuards(JwtAuthGuard)
-  public async logoutUser(@User() user: IJwtPayload) {
-    return await this.authService.removeTokensByUserId(user.sub)
+  public async logoutUser(@User() user: IJwtPayload, @Req() req: Request) {
+    return await this.authService.removeTokenByToken(user.sub, req.cookies[COOKIE_KEYS.REFRESH_TOKEN])
   }
 
   @Post('/refresh')

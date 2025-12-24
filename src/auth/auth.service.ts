@@ -130,5 +130,15 @@ export class AuthService {
         return { message: 'Successfully logged out.' }
     }
 
+    public async removeTokenByToken(user_id: number, refreshToken: string) {
+        if (!refreshToken) throw new UnauthorizedException()
+        const hashPlainToken = crypto.createHash('sha256').update(refreshToken).digest('hex')
+        await this.refreshRepo.delete({ 
+            hash_token: hashPlainToken,
+            user: {id: user_id}
+         })
+        return { message: 'Successfully logged out.' }
+    }
+
 
 }
